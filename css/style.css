@@ -243,7 +243,7 @@ button { cursor: pointer; }
 .header-logo {
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-bold);
-  color: var(--color-accent-yellow);
+  color: var(--color-accent-turquoise);
   letter-spacing: -0.02em;
 }
 
@@ -354,12 +354,12 @@ button { cursor: pointer; }
 
 .nav-menu-link:hover {
   background: var(--color-bg-input);
-  color: var(--color-accent-yellow);
+  color: var(--color-accent-turquoise);
 }
 
 .nav-menu-link.active {
-  color: var(--color-accent-yellow);
-  background: var(--color-accent-yellow-light);
+  color: var(--color-accent-turquoise);
+  background: var(--color-accent-turquoise-light);
 }
 
 .nav-menu-link svg,
@@ -462,7 +462,7 @@ button { cursor: pointer; }
 
 .nav-item:hover,
 .nav-item.active {
-  color: var(--color-accent-yellow);
+  color: var(--color-accent-turquoise);
 }
 
 .nav-item.active svg,
@@ -478,7 +478,7 @@ button { cursor: pointer; }
   transform: translateX(-50%);
   width: 28px;
   height: 2px;
-  background: var(--color-accent-yellow);
+  background: var(--color-accent-turquoise);
   border-radius: 0 0 var(--radius-full) var(--radius-full);
 }
 
@@ -1119,7 +1119,7 @@ a.list-item:hover {
   width: 56px;
   height: 56px;
   border-radius: var(--radius-xl);
-  background: var(--color-accent-yellow);
+  background: var(--color-accent-turquoise);
   color: #FFFFFF;
   margin-bottom: var(--space-base);
 }
@@ -1874,8 +1874,8 @@ a.list-item:hover {
   }
 
   .desktop-nav-link.active {
-    color: var(--color-accent-yellow);
-    background: var(--color-accent-yellow-light);
+    color: var(--color-accent-turquoise);
+    background: var(--color-accent-turquoise-light);
   }
 
   .responders-grid {
