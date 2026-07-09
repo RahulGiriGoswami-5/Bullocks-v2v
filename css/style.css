@@ -23,6 +23,8 @@ body {
   line-height: var(--line-height-normal);
   color: var(--color-text-primary);
   background: var(--color-bg-primary);
+  background-size: 200% 200%;
+  animation: bgDrift 15s ease infinite;
   min-height: 100vh;
   min-height: 100dvh;
   transition: background var(--transition-base), color var(--transition-base);
@@ -406,6 +408,18 @@ button { cursor: pointer; }
   to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes bgDrift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes borderPulse {
+  0% { border-color: var(--color-border-light); }
+  50% { border-color: var(--color-accent-turquoise); }
+  100% { border-color: var(--color-border-light); }
+}
+
 /* SPA View Toggling */
 .view {
   display: none;
@@ -734,6 +748,7 @@ button { cursor: pointer; }
   padding: var(--space-lg);
   transition: background-color var(--transition-base), border-color var(--transition-base),
               box-shadow var(--transition-fast);
+  animation: borderPulse 4s infinite alternate ease-in-out;
 }
 
 .card:hover {
