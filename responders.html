@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nearby Responders — Sahayika</title>
+  <meta name="description" content="View verified safety responders near you — community volunteers, police patrols, and medical aid workers ready to help.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <input type="checkbox" id="nav-menu-toggle" class="nav-menu-checkbox" aria-hidden="true">
+
+  <header class="app-header">
+    <div class="header-inner">
+      <a href="home.html" class="header-logo">Sahayika</a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="home.html" class="desktop-nav-link">Home</a>
+        <a href="checkin.html" class="desktop-nav-link">Check-in</a>
+        <a href="sos.html" class="desktop-nav-link">Tools</a>
+        <a href="report.html" class="desktop-nav-link">Report</a>
+        <a href="responders.html" class="desktop-nav-link active">Responders</a>
+        <a href="profile.html" class="desktop-nav-link">Profile</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle" class="btn-icon theme-toggle" aria-label="Toggle dark mode">
+          <span class="theme-icon-light"><i data-lucide="sun"></i></span>
+          <span class="theme-icon-dark"><i data-lucide="moon"></i></span>
+        </button>
+        <label for="nav-menu-toggle" class="btn-icon nav-menu-btn" aria-label="Open menu">
+          <i data-lucide="menu"></i>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <div class="nav-menu-overlay">
+    <label for="nav-menu-toggle" class="nav-menu-backdrop" aria-label="Close menu"></label>
+    <div class="nav-menu-panel">
+      <div class="nav-menu-header">
+        <span class="nav-menu-title">Menu</span>
+        <label for="nav-menu-toggle" class="btn-icon" aria-label="Close menu">
+          <i data-lucide="x"></i>
+        </label>
+      </div>
+      <div class="nav-menu-links">
+        <a href="home.html" class="nav-menu-link"><i data-lucide="home"></i> Home</a>
+        <a href="checkin.html" class="nav-menu-link"><i data-lucide="clock"></i> Check-in</a>
+        <a href="sos.html" class="nav-menu-link"><i data-lucide="calculator"></i> Tools</a>
+        <a href="report.html" class="nav-menu-link"><i data-lucide="file-text"></i> Report</a>
+        <a href="responders.html" class="nav-menu-link active"><i data-lucide="users"></i> Responders</a>
+        <a href="profile.html" class="nav-menu-link"><i data-lucide="user"></i> Profile</a>
+        <div class="nav-menu-divider"></div>
+        <a href="index.html" class="nav-menu-link"><i data-lucide="log-out"></i> Sign Out</a>
+      </div>
+    </div>
+  </div>
+
+  <main class="page-content">
+
+    <div class="section">
+      <h1 class="page-title">Nearby Responders</h1>
+      <p class="page-subtitle">Verified community helpers, patrol officers, and medical aid workers near your location.</p>
+    </div>
+
+    <!-- Filter Chips -->
+    <div class="filter-chips" style="margin-bottom: var(--space-xl);">
+      <button class="filter-chip active">All</button>
+      <button class="filter-chip">Police</button>
+      <button class="filter-chip">Medical</button>
+      <button class="filter-chip">Volunteers</button>
+      <button class="filter-chip">NGO Workers</button>
+    </div>
+
+    <!-- Responders Grid -->
+    <div class="responders-grid">
+
+      <!-- Responder 1 -->
+      <div class="card responder-card">
+        <div class="avatar avatar-lg avatar-turquoise">SK</div>
+        <div class="responder-info">
+          <div class="responder-name">
+            Sunita Kulkarni
+            <span class="responder-verified" title="Verified"><i data-lucide="badge-check"></i></span>
+          </div>
+          <div class="responder-meta">
+            <span class="responder-meta-item"><i data-lucide="briefcase"></i> Community volunteer</span>
+            <span class="responder-meta-item"><i data-lucide="navigation"></i> 0.3 km</span>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline" aria-label="Contact Sunita Kulkarni">
+          <i data-lucide="phone"></i>
+        </button>
+      </div>
+
+      <!-- Responder 2 -->
+      <div class="card responder-card">
+        <div class="avatar avatar-lg">RV</div>
+        <div class="responder-info">
+          <div class="responder-name">
+            Rajesh Verma
+            <span class="responder-verified" title="Verified"><i data-lucide="badge-check"></i></span>
+          </div>
+          <div class="responder-meta">
+            <span class="responder-meta-item"><i data-lucide="shield"></i> Police patrol</span>
+            <span class="responder-meta-item"><i data-lucide="navigation"></i> 0.8 km</span>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline" aria-label="Contact Rajesh Verma">
+          <i data-lucide="phone"></i>
+        </button>
+      </div>
+
+      <!-- Responder 3 -->
+      <div class="card responder-card">
+        <div class="avatar avatar-lg avatar-turquoise">MN</div>
+        <div class="responder-info">
+          <div class="responder-name">
+            Meena Nair
+            <span class="responder-verified" title="Verified"><i data-lucide="badge-check"></i></span>
+          </div>
+          <div class="responder-meta">
+            <span class="responder-meta-item"><i data-lucide="heart-pulse"></i> Medical aid</span>
+            <span class="responder-meta-item"><i data-lucide="navigation"></i> 1.2 km</span>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline" aria-label="Contact Meena Nair">
+          <i data-lucide="phone"></i>
+        </button>
+      </div>
+
+      <!-- Responder 4 -->
+      <div class="card responder-card">
+        <div class="avatar avatar-lg">AP</div>
+        <div class="responder-info">
+          <div class="responder-name">
+            Ankit Patel
+            <span class="responder-verified" title="Verified"><i data-lucide="badge-check"></i></span>
+          </div>
+          <div class="responder-meta">
+            <span class="responder-meta-item"><i data-lucide="shield"></i> Police patrol</span>
+            <span class="responder-meta-item"><i data-lucide="navigation"></i> 1.5 km</span>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline" aria-label="Contact Ankit Patel">
+          <i data-lucide="phone"></i>
+        </button>
+      </div>
+
+      <!-- Responder 5 -->
+      <div class="card responder-card">
+        <div class="avatar avatar-lg avatar-turquoise">DS</div>
+        <div class="responder-info">
+          <div class="responder-name">
+            Deepa Sharma
+            <span class="responder-verified" title="Verified"><i data-lucide="badge-check"></i></span>
+          </div>
+          <div class="responder-meta">
+            <span class="responder-meta-item"><i data-lucide="heart"></i> NGO worker</span>
+            <span class="responder-meta-item"><i data-lucide="navigation"></i> 1.8 km</span>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline" aria-label="Contact Deepa Sharma">
+          <i data-lucide="phone"></i>
+        </button>
+      </div>
+
+      <!-- Responder 6 -->
+      <div class="card responder-card">
+        <div class="avatar avatar-lg">VG</div>
+        <div class="responder-info">
+          <div class="responder-name">
+            Vikram Gupta
+            <span class="responder-verified" title="Verified"><i data-lucide="badge-check"></i></span>
+          </div>
+          <div class="responder-meta">
+            <span class="responder-meta-item"><i data-lucide="briefcase"></i> Community volunteer</span>
+            <span class="responder-meta-item"><i data-lucide="navigation"></i> 2.1 km</span>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline" aria-label="Contact Vikram Gupta">
+          <i data-lucide="phone"></i>
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <nav class="bottom-nav" aria-label="Main navigation">
+    <a href="home.html" class="nav-item" id="nav-home">
+      <i data-lucide="home"></i>
+      <span>Home</span>
+    </a>
+    <a href="checkin.html" class="nav-item" id="nav-checkin">
+      <i data-lucide="clock"></i>
+      <span>Check-in</span>
+    </a>
+    <a href="sos.html" class="nav-item" id="nav-sos">
+      <i data-lucide="calculator"></i>
+      <span>Tools</span>
+    </a>
+    <a href="report.html" class="nav-item" id="nav-report">
+      <i data-lucide="file-text"></i>
+      <span>Report</span>
+    </a>
+    <a href="responders.html" class="nav-item active" id="nav-responders">
+      <i data-lucide="users"></i>
+      <span>Nearby</span>
+    </a>
+    <a href="profile.html" class="nav-item" id="nav-profile">
+      <i data-lucide="user"></i>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script>lucide.createIcons();</script>
+  <script src="js/theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tools — Sahayika</title>
+  <meta name="description" content="Quick utility tools — calculator and more.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <input type="checkbox" id="nav-menu-toggle" class="nav-menu-checkbox" aria-hidden="true">
+
+  <header class="app-header">
+    <div class="header-inner">
+      <a href="home.html" class="header-logo">Sahayika</a>
+      <span class="header-title">Calculator</span>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="home.html" class="desktop-nav-link">Home</a>
+        <a href="checkin.html" class="desktop-nav-link">Check-in</a>
+        <a href="sos.html" class="desktop-nav-link active">Tools</a>
+        <a href="report.html" class="desktop-nav-link">Report</a>
+        <a href="responders.html" class="desktop-nav-link">Responders</a>
+        <a href="profile.html" class="desktop-nav-link">Profile</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle" class="btn-icon theme-toggle" aria-label="Toggle dark mode">
+          <span class="theme-icon-light"><i data-lucide="sun"></i></span>
+          <span class="theme-icon-dark"><i data-lucide="moon"></i></span>
+        </button>
+        <label for="nav-menu-toggle" class="btn-icon nav-menu-btn" aria-label="Open menu">
+          <i data-lucide="menu"></i>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <div class="nav-menu-overlay">
+    <label for="nav-menu-toggle" class="nav-menu-backdrop" aria-label="Close menu"></label>
+    <div class="nav-menu-panel">
+      <div class="nav-menu-header">
+        <span class="nav-menu-title">Menu</span>
+        <label for="nav-menu-toggle" class="btn-icon" aria-label="Close menu">
+          <i data-lucide="x"></i>
+        </label>
+      </div>
+      <div class="nav-menu-links">
+        <a href="home.html" class="nav-menu-link"><i data-lucide="home"></i> Home</a>
+        <a href="checkin.html" class="nav-menu-link"><i data-lucide="clock"></i> Check-in</a>
+        <a href="sos.html" class="nav-menu-link active"><i data-lucide="calculator"></i> Tools</a>
+        <a href="report.html" class="nav-menu-link"><i data-lucide="file-text"></i> Report</a>
+        <a href="responders.html" class="nav-menu-link"><i data-lucide="users"></i> Responders</a>
+        <a href="profile.html" class="nav-menu-link"><i data-lucide="user"></i> Profile</a>
+        <div class="nav-menu-divider"></div>
+        <a href="index.html" class="nav-menu-link"><i data-lucide="log-out"></i> Sign Out</a>
+      </div>
+    </div>
+  </div>
+
+  <main class="page-content">
+    <div class="calculator-wrapper">
+
+      <!-- Calculator Display -->
+      <div class="calc-display">
+        <div class="calc-expression">0 + 0</div>
+        <div class="calc-result">0</div>
+      </div>
+
+      <!-- Calculator Grid -->
+      <div class="calc-grid">
+        <button class="calc-btn calc-btn-func" id="calc-ac">AC</button>
+        <button class="calc-btn calc-btn-func" id="calc-plusminus">
+          <i data-lucide="plus-minus" style="width:20px;height:20px;"></i>
+        </button>
+        <button class="calc-btn calc-btn-func" id="calc-percent">%</button>
+        <button class="calc-btn calc-btn-op" id="calc-divide">
+          <i data-lucide="divide" style="width:20px;height:20px;"></i>
+        </button>
+
+        <button class="calc-btn calc-btn-number" id="calc-7">7</button>
+        <button class="calc-btn calc-btn-number" id="calc-8">8</button>
+        <button class="calc-btn calc-btn-number" id="calc-9">9</button>
+        <button class="calc-btn calc-btn-op" id="calc-multiply">
+          <i data-lucide="x" style="width:20px;height:20px;"></i>
+        </button>
+
+        <button class="calc-btn calc-btn-number" id="calc-4">4</button>
+        <button class="calc-btn calc-btn-number" id="calc-5">5</button>
+        <button class="calc-btn calc-btn-number" id="calc-6">6</button>
+        <button class="calc-btn calc-btn-op" id="calc-minus">
+          <i data-lucide="minus" style="width:20px;height:20px;"></i>
+        </button>
+
+        <button class="calc-btn calc-btn-number" id="calc-1">1</button>
+        <button class="calc-btn calc-btn-number" id="calc-2">2</button>
+        <button class="calc-btn calc-btn-number" id="calc-3">3</button>
+        <button class="calc-btn calc-btn-op" id="calc-plus">
+          <i data-lucide="plus" style="width:20px;height:20px;"></i>
+        </button>
+
+        <button class="calc-btn calc-btn-number calc-btn-zero" id="calc-0">0</button>
+        <button class="calc-btn calc-btn-number" id="calc-dot">.</button>
+        <button class="calc-btn calc-btn-equal" id="calc-equals">=</button>
+      </div>
+
+    </div>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Main navigation">
+    <a href="home.html" class="nav-item" id="nav-home">
+      <i data-lucide="home"></i>
+      <span>Home</span>
+    </a>
+    <a href="checkin.html" class="nav-item" id="nav-checkin">
+      <i data-lucide="clock"></i>
+      <span>Check-in</span>
+    </a>
+    <a href="sos.html" class="nav-item active" id="nav-sos">
+      <i data-lucide="calculator"></i>
+      <span>Tools</span>
+    </a>
+    <a href="report.html" class="nav-item" id="nav-report">
+      <i data-lucide="file-text"></i>
+      <span>Report</span>
+    </a>
+    <a href="responders.html" class="nav-item" id="nav-responders">
+      <i data-lucide="users"></i>
+      <span>Nearby</span>
+    </a>
+    <a href="profile.html" class="nav-item" id="nav-profile">
+      <i data-lucide="user"></i>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script>lucide.createIcons();</script>
+  <script src="js/theme.js"></script>
+</body>
+</html>
