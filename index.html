@@ -1191,10 +1191,10 @@
                                 <div class="stat-label">Safety Streak</div>
                             </div>
                         </div>
-                        <div class="profile-stat-box">
+                        <div class="profile-stat-box" id="profile-reports-card" style="cursor: pointer;">
                             <div class="stat-icon-wrapper text-navy"><i data-lucide="file-check"></i></div>
                             <div>
-                                <div class="stat-value">4 Reports</div>
+                                <div class="stat-value" id="profile-reports-count">0 Reports</div>
                                 <div class="stat-label">Submitted</div>
                             </div>
                         </div>
@@ -1310,6 +1310,24 @@
                     </div>
                 </div>
                 <p class="text-3xs text-muted" id="ach-modal-unlock-date" style="margin-top:var(--space-xs);"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Reports Modal -->
+    <div class="modal-overlay" id="user-reports-modal">
+        <div class="modal-card" style="max-width:400px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Your Reports</h3>
+                <button class="modal-close" id="user-reports-modal-close" aria-label="Close" style="position:static; transform:none;">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <p class="text-xs text-muted" id="user-reports-summary" style="margin-bottom: var(--space-md);">0 of 0 Completed</p>
+            
+            <div id="user-reports-list" class="user-reports-list">
+                <!-- Populated by JS -->
             </div>
         </div>
     </div>

@@ -1261,10 +1261,16 @@ async function loadAchievements() {
     const distinctTools = toolRows ? new Set(toolRows.map(r => r.tool_key)).size : 0;
     const isProfileComplete = !!(profile && profile.full_name && profile.phone && user.email_confirmed_at);
 
+    const reportsSubmittedCount = reportCount || 0;
+    const profileReportsCountEl = document.getElementById('profile-reports-count');
+    if (profileReportsCountEl) {
+        profileReportsCountEl.textContent = `${reportsSubmittedCount} Reports`;
+    }
+
     const progress = {
         guardian_circle:   contactCount || 0,
         safe_streak:       calcCheckinStreak(checkins),
-        community_watcher: reportCount || 0,
+        community_watcher: reportsSubmittedCount,
         response_ready:    distinctTools,
         verified_guardian: isProfileComplete ? 1 : 0
     };
@@ -1290,6 +1296,106 @@ async function loadAchievements() {
         container.appendChild(card);
     });
     if (typeof lucide !== 'undefined') lucide.createIcons();
+    // User Reports Modal Logic
+    const profileReportsCard = document.getElementById('profile-reports-card');
+    const userReportsModal = document.getElementById('user-reports-modal');
+    const userReportsModalClose = document.getElementById('user-reports-modal-close');
+    const userReportsList = document.getElementById('user-reports-list');
+    const userReportsSummary = document.getElementById('user-reports-summary');
+
+    if (profileReportsCard) {
+        profileReportsCard.addEventListener('click', async () => {
+            if (!userReportsModal) return;
+
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) {
+                showToast("Please login to view your reports.");
+                return;
+            }
+
+            userReportsList.innerHTML = `<div class="text-center text-muted text-xs p-md"><i data-lucide="loader" class="animate-spin w-5 h-5 mx-auto mb-xs"></i>Loading reports...</div>`;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            userReportsModal.classList.add('active');
+
+            try {
+                // 1. Fetch user report log
+                const { data: logData, error: logError } = await supabaseClient
+                    .from('user_report_log')
+                    .select('report_id')
+                    .eq('user_id', user.id);
+
+                if (logError) throw logError;
+
+                const reportIds = logData.map(log => log.report_id).filter(id => id !== null);
+
+                if (reportIds.length === 0) {
+                    userReportsSummary.textContent = "0 of 0 Completed";
+                    userReportsList.innerHTML = `
+                        <div class="text-center text-muted" style="padding: 2rem 0;">
+                            <i data-lucide="file-x" style="width: 32px; height: 32px; margin: 0 auto 8px auto; opacity: 0.5;"></i>
+                            <p class="text-xs">No reports submitted yet.</p>
+                        </div>
+                    `;
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                    return;
+                }
+
+                // 2. Fetch report details
+                const { data: reportsData, error: reportsError } = await supabaseClient
+                    .from('reports')
+                    .select('id, category, created_at')
+                    .in('id', reportIds)
+                    .order('created_at', { ascending: false });
+
+                if (reportsError) throw reportsError;
+
+                // 3. Render
+                let completedCount = 0;
+                userReportsList.innerHTML = reportsData.map(report => {
+                    // Mock Status: If it's more than 2 hours old, call it "Completed". Otherwise "Pending".
+                    const ageMs = Date.now() - new Date(report.created_at).getTime();
+                    const isCompleted = ageMs > (2 * 60 * 60 * 1000);
+                    if (isCompleted) completedCount++;
+
+                    const dateStr = new Date(report.created_at).toLocaleDateString('en-IN', {
+                        day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                    });
+
+                    return `
+                        <div class="user-report-item">
+                            <div class="user-report-info">
+                                <span class="user-report-title">${report.category.replace('-', ' ')}</span>
+                                <span class="user-report-date">${dateStr}</span>
+                            </div>
+                            <div class="status-badge ${isCompleted ? 'status-badge-completed' : 'status-badge-pending'}">
+                                <i data-lucide="${isCompleted ? 'check-circle' : 'clock'}" style="width:12px;height:12px;"></i>
+                                ${isCompleted ? 'Completed' : 'Pending'}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                userReportsSummary.textContent = `${completedCount} of ${reportsData.length} Completed`;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            } catch (err) {
+                console.error("Failed to load user reports:", err);
+                userReportsList.innerHTML = `<div class="text-center text-red text-xs p-md">Failed to load reports.</div>`;
+            }
+        });
+    }
+
+    if (userReportsModalClose) {
+        userReportsModalClose.addEventListener('click', () => {
+            if (userReportsModal) userReportsModal.classList.remove('active');
+        });
+    }
+
+    if (userReportsModal) {
+        userReportsModal.addEventListener('click', (e) => {
+            if (e.target === userReportsModal) userReportsModal.classList.remove('active');
+        });
+    }
 }
 
 function openAchievementModal(ach, current, checkins, toolRows) {
