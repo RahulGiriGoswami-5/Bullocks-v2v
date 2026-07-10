@@ -3639,6 +3639,27 @@ textarea:focus-visible {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    position: relative;
+}
+
+.ach-lock-overlay {
+    position: absolute;
+    bottom: -3px;
+    right: -3px;
+    width: 13px;
+    height: 13px;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+}
+
+.ach-lock-overlay svg {
+    width: 7px !important;
+    height: 7px !important;
 }
 
 .achievement-badge-icon svg {
@@ -3724,10 +3745,7 @@ textarea:focus-visible {
     background: var(--color-primary-light);
 }
 
-.settings-section {
-    display: flex;
-    flex-direction: column;
-}
+
 
 .list-item {
     display: flex;
@@ -4500,4 +4518,64 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     margin-right: 4px;
+}
+
+/* ==========================================
+   USER REPORTS MODAL
+   ========================================== */
+.user-reports-list {
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding-right: var(--space-xs);
+}
+
+.user-report-item {
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-report-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.user-report-title {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    text-transform: capitalize;
+}
+
+.user-report-date {
+    font-size: var(--font-size-3xs);
+    color: var(--color-text-muted);
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-3xs);
+    font-weight: var(--font-weight-semibold);
+}
+
+.status-badge-pending {
+    background: rgba(251, 191, 36, 0.1);
+    color: #f59e0b; /* Amber */
+}
+
+.status-badge-completed {
+    background: rgba(52, 211, 153, 0.1);
+    color: var(--color-emerald);
 }
