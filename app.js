@@ -1154,10 +1154,168 @@ function initApp() {
             });
         });
     })();
+
+} async function loadTrustedContacts() {
+
+    const container = document.getElementById("trustedContacts");
+
+    if (!container) return;
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        container.innerHTML = `
+            <p class="text-muted">Login to view trusted contacts.</p>
+        `;
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from("trusted_contacts")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: true });
+
+    if (error) {
+        console.error(error);
+        container.innerHTML = `
+            <p class="text-muted">Unable to load contacts.</p>
+        `;
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        container.innerHTML = `
+            <p class="text-muted">No trusted contacts added yet.</p>
+        `;
+        return;
+    }
+
+    container.innerHTML = "";
+
+    data.forEach(contact => {
+
+        const initials = contact.name
+            .split(" ")
+            .map(word => word[0])
+            .join("")
+            .substring(0, 2)
+            .toUpperCase();
+
+        container.innerHTML += `
+            <div class="checkin-contact-card" style="margin-top:8px;">
+
+                <div class="avatar avatar-md">
+                    ${initials}
+                </div>
+
+                <div class="checkin-contact-info">
+
+                    <div class="checkin-contact-name">
+                        ${contact.name}
+                        <span class="badge badge-success-light text-xs">
+                            ${contact.relation}
+                        </span>
+                    </div>
+
+                    <div class="checkin-contact-phone">
+                        ${contact.phone}
+                    </div>
+
+                </div>
+
+                <span class="badge badge-turquoise">
+                    Trusted
+                </span>
+
+            </div>
+        `;
+    });
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
+
+async function addTrustedContact() {
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        alert("Please login first.");
+        return;
+    }
+
+    const name = document.getElementById("contactName").value.trim();
+    const relation = document.getElementById("contactRelation").value.trim();
+    const phone = document.getElementById("contactPhone").value.trim();
+
+    if (!name || !relation || !phone) {
+        alert("Please fill all fields.");
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from("trusted_contacts")
+        .insert({
+            user_id: user.id,
+            name: name,
+            relation: relation,
+            phone: phone
+        });
+
+    if (error) {
+        console.error(error);
+        alert(error.message);
+        return;
+    }
+
+    document.getElementById("contactName").value = "";
+    document.getElementById("contactRelation").value = "";
+    document.getElementById("contactPhone").value = "";
+
+    document.getElementById("addContactForm").style.display = "none";
+
+    const addBtn = document.getElementById("showAddContact");
+    if (addBtn) addBtn.style.display = "block";
+
+    loadTrustedContacts();
+
+    alert("Trusted Contact Added Successfully.");
 }
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initApp);
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        initApp();
+
+        loadTrustedContacts();
+
+        const addBtn = document.getElementById("showAddContact");
+
+        if (addBtn) {
+            addBtn.addEventListener("click", () => {
+                document.getElementById("addContactForm").style.display = "block";
+                addBtn.style.display = "none";
+            });
+        }
+
+    });
+
 } else {
+
     initApp();
+
+    loadTrustedContacts();
+
+    const addBtn = document.getElementById("showAddContact");
+
+    if (addBtn) {
+        addBtn.addEventListener("click", () => {
+            document.getElementById("addContactForm").style.display = "block";
+            addBtn.style.display = "none";
+        });
+    }
+
 }

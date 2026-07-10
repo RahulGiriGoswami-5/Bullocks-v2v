@@ -617,33 +617,41 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Trusted Guards to Notify</label>
-                                <div class="checkin-contacts-list">
-                                    <div class="checkin-contact-card">
-                                        <div class="avatar avatar-md">AM</div>
-                                        <div class="checkin-contact-info">
-                                            <div class="checkin-contact-name">Aarti Mehta <span
-                                                    class="badge badge-success-light text-xs"><i data-lucide="heart"
-                                                        class="w-3 h-3 text-emerald inline-block"></i> Sister</span>
-                                            </div>
-                                            <div class="checkin-contact-phone">+91 98XXX XXXXX</div>
-                                        </div>
-                                        <span class="badge badge-turquoise">Trusted</span>
-                                    </div>
-                                    <div class="checkin-contact-card" style="margin-top: 8px;">
-                                        <div class="avatar avatar-md avatar-turquoise">RP</div>
-                                        <div class="checkin-contact-info">
-                                            <div class="checkin-contact-name">Ravi Patel <span
-                                                    class="badge badge-success-light text-xs"><i data-lucide="smile"
-                                                        class="w-3 h-3 text-emerald inline-block"></i> Friend</span>
-                                            </div>
-                                            <div class="checkin-contact-phone">+91 87XXX XXXXX</div>
-                                        </div>
-                                        <span class="badge badge-turquoise">Trusted</span>
-                                    </div>
-                                </div>
-                            </div>
 
+                                <label class="form-label">Trusted Guards to Notify</label>
+
+                                <div class="checkin-contacts-list" id="trustedContacts">
+
+                                    <!-- Contacts will load here -->
+
+                                </div>
+
+                                <button id="showAddContact" class="btn btn-outline btn-block" style="margin-top:12px;">
+
+                                    + Add Trusted Contact
+
+                                </button>
+
+                                <div id="addContactForm" style="display:none;margin-top:15px;">
+
+                                    <input id="contactName" class="form-input" placeholder="Full Name">
+
+                                    <input id="contactRelation" class="form-input" placeholder="Relation"
+                                        style="margin-top:10px;">
+
+                                    <input id="contactPhone" class="form-input" placeholder="+91XXXXXXXXXX"
+                                        style="margin-top:10px;">
+
+                                    <button onclick="addTrustedContact()" class="btn btn-primary btn-block"
+                                        style="margin-top:12px;">
+
+                                        Save Contact
+
+                                    </button>
+
+                                </div>
+
+                            </div>
                             <div class="notice notice-info">
                                 <i data-lucide="info"></i>
                                 <span>If the timer runs out without a check-in, an automatic SMS/Call alert will trigger
