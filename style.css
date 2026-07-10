@@ -4315,3 +4315,104 @@ html[data-theme="light"] .device-mockup {
 .report-submit-btn {
     margin-top: 2px;
 }
+
+/* --- Map Card Wrapper (fullscreen expand support) --- */
+.map-card-wrapper {
+    position: relative;
+    margin-bottom: var(--space-sm);
+}
+
+.map-card-wrapper .map-container {
+    margin-bottom: 0;
+    transition: border-radius var(--transition-base);
+}
+
+.map-card-wrapper.map-fullscreen-active {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    margin: 0;
+    background: var(--color-bg-page);
+}
+
+.map-card-wrapper.map-fullscreen-active .map-container {
+    height: 100%;
+    width: 100%;
+    border-radius: 0;
+    border: none;
+}
+
+body.map-fullscreen-lock {
+    overflow: hidden;
+}
+
+/* Floating control buttons (locate + expand/close) */
+.map-controls-overlay {
+    position: absolute;
+    top: var(--space-sm);
+    right: var(--space-sm);
+    z-index: 10000;
+    display: flex;
+    gap: 8px;
+}
+
+.map-control-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-fast);
+}
+
+.map-control-btn:hover {
+    background: var(--color-primary);
+    color: #FFFFFF;
+    border-color: var(--color-primary);
+}
+
+.map-control-btn i {
+    width: 18px;
+    height: 18px;
+}
+
+/* Live "you are here" pulsing dot */
+.user-location-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #2563EB;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.4);
+    position: relative;
+}
+
+.user-location-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, 0.45);
+    animation: userLocationPulse 1.8s ease-out infinite;
+}
+
+@keyframes userLocationPulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(2.8);
+        opacity: 0;
+    }
+}

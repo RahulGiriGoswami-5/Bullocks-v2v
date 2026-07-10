@@ -122,6 +122,7 @@ function initApp() {
     // Close menus/modals with Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
+            if (isMapFullscreen) setMapFullscreen(false);
             if (navMenuToggle) navMenuToggle.checked = false;
 
             const authModal = document.getElementById('auth-modal');
@@ -315,6 +316,156 @@ function initApp() {
         mapInstance.on('click', handleMapReportClick);
 
         renderReportPins();
+    }
+
+    // ==========================================
+    // LIVE LOCATION (geolocation permission + tracking)
+    // ==========================================
+    let userLocationMarker = null;
+    let geoWatchId = null;
+
+    function updateUserLocationMarker(lat, lng) {
+        if (!mapInstance) return;
+        if (userLocationMarker) {
+            mapInstance.removeLayer(userLocationMarker);
+        }
+        const icon = L.divIcon({
+            className: 'user-location-icon',
+            html: '<div class="user-location-dot"><span class="user-location-pulse"></span></div>',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+        });
+        userLocationMarker = L.marker([lat, lng], { icon, zIndexOffset: 1000 })
+            .bindTooltip('You are here', { direction: 'top', offset: [0, -10] });
+        userLocationMarker.addTo(mapInstance);
+    }
+
+    function requestLiveLocation(recenter) {
+        if (!navigator.geolocation) {
+            showToast('Live location is not supported on this device.');
+            return;
+        }
+
+        // Check the actual permission state first. Browsers will NOT
+        // re-show the native popup once a user has blocked it — so if
+        // we blindly call getCurrentPosition again it just fails silently.
+        // Checking first lets us give honest, actionable feedback instead.
+        if (navigator.permissions && navigator.permissions.query) {
+            navigator.permissions.query({ name: 'geolocation' })
+                .then((status) => {
+                    if (status.state === 'denied') {
+                        showLocationDeniedHelp();
+                        return;
+                    }
+                    fetchAndTrackLocation(recenter);
+                })
+                .catch(() => fetchAndTrackLocation(recenter)); // Permissions API not fully supported — try directly
+        } else {
+            fetchAndTrackLocation(recenter);
+        }
+    }
+
+    function fetchAndTrackLocation(recenter) {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const { latitude, longitude } = pos.coords;
+                updateUserLocationMarker(latitude, longitude);
+                if (recenter && mapInstance) {
+                    mapInstance.setView([latitude, longitude], 16);
+                }
+                startWatchingLocation();
+            },
+            (err) => {
+                console.warn('Geolocation error:', err);
+                if (err.code === err.PERMISSION_DENIED) {
+                    showLocationDeniedHelp();
+                } else {
+                    showToast('Could not get your live location. Please try again.');
+                }
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+    }
+
+    function showLocationDeniedHelp() {
+        showToast('Location is blocked for this site. Tap the lock/info icon in your browser\'s address bar → Site settings → Location → Allow — then tap the locate button again.');
+    }
+
+    function startWatchingLocation() {
+        if (geoWatchId !== null || !navigator.geolocation) return;
+        geoWatchId = navigator.geolocation.watchPosition(
+            (pos) => {
+                const { latitude, longitude } = pos.coords;
+                updateUserLocationMarker(latitude, longitude);
+            },
+            (err) => console.warn('Geolocation watch error:', err),
+            { enableHighAccuracy: true, maximumAge: 30000 }
+        );
+    }
+
+    function stopWatchingLocation() {
+        if (geoWatchId !== null && navigator.geolocation) {
+            navigator.geolocation.clearWatch(geoWatchId);
+            geoWatchId = null;
+        }
+    }
+
+    window.addEventListener('hashchange', () => {
+        if (window.location.hash !== '#view-home') {
+            stopWatchingLocation();
+        }
+    });
+
+    const mapLocateBtn = document.getElementById('map-locate-btn');
+    if (mapLocateBtn) {
+        mapLocateBtn.addEventListener('click', () => requestLiveLocation(true));
+    }
+
+    // ==========================================
+    // MAP FULLSCREEN EXPAND / CLOSE
+    // ==========================================
+    const mapCardWrapper = document.getElementById('map-card-wrapper');
+    const mapExpandBtn = document.getElementById('map-expand-btn');
+    let isMapFullscreen = false;
+
+    // Placeholder marks exactly where the map card lives in the page,
+    // so we can put it back in the right spot after fullscreen closes.
+    const mapCardPlaceholder = document.createComment('map-card-placeholder');
+
+    function setMapFullscreen(expand) {
+        if (!mapCardWrapper) return;
+        isMapFullscreen = expand;
+
+        if (expand) {
+            // Move the map card out from under any transformed ancestor
+            // (the .view fade-in animation leaves a transform applied,
+            // which breaks position:fixed containment) and attach it
+            // directly to <body> so "fixed" is relative to the real viewport.
+            mapCardWrapper.parentNode.insertBefore(mapCardPlaceholder, mapCardWrapper);
+            document.body.appendChild(mapCardWrapper);
+        } else if (mapCardPlaceholder.parentNode) {
+            mapCardPlaceholder.parentNode.insertBefore(mapCardWrapper, mapCardPlaceholder);
+            mapCardPlaceholder.remove();
+        }
+
+        mapCardWrapper.classList.toggle('map-fullscreen-active', expand);
+        document.body.classList.toggle('map-fullscreen-lock', expand);
+
+        if (mapExpandBtn) {
+            mapExpandBtn.innerHTML = expand
+                ? '<i data-lucide="minimize-2"></i>'
+                : '<i data-lucide="maximize-2"></i>';
+            mapExpandBtn.setAttribute('title', expand ? 'Close full-screen map' : 'Expand map');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        setTimeout(() => {
+            if (mapInstance) mapInstance.invalidateSize();
+        }, 210);
+    }
+
+    if (mapExpandBtn) {
+        mapExpandBtn.addEventListener('click', () => setMapFullscreen(!isMapFullscreen));
     }
 
     async function renderReportPins() {

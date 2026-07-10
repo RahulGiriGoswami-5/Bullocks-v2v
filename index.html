@@ -341,7 +341,18 @@
                     </div>
 
                     <!-- Leaflet Map Container -->
-                    <div id="map" class="map-container"></div>
+                    <div class="map-card-wrapper" id="map-card-wrapper">
+                        <div id="map" class="map-container"></div>
+                        <div class="map-controls-overlay">
+                            <button type="button" class="map-control-btn" id="map-locate-btn"
+                                title="Use my live location">
+                                <i data-lucide="locate-fixed"></i>
+                            </button>
+                            <button type="button" class="map-control-btn" id="map-expand-btn" title="Expand map">
+                                <i data-lucide="maximize-2"></i>
+                            </button>
+                        </div>
+                    </div>
 
                     <div class="heatmap-legend">
                         <div class="heatmap-legend-item">
