@@ -1206,21 +1206,8 @@
                     <div class="section-heading">
                         <h2 class="section-title">Verified Badges & Achievements</h2>
                     </div>
-                    <div class="achievements-grid-new">
-                        <div class="card achievement-card-new">
-                            <div class="achievement-badge-icon badge-gold"><i data-lucide="award"></i></div>
-                            <div>
-                                <div class="font-semibold text-xs text-navy">Active Guard</div>
-                                <div class="text-3xs text-muted">Completed 10 safe route check-ins.</div>
-                            </div>
-                        </div>
-                        <div class="card achievement-card-new">
-                            <div class="achievement-badge-icon badge-silver"><i data-lucide="eye"></i></div>
-                            <div>
-                                <div class="font-semibold text-xs text-navy">Civic Watchdog</div>
-                                <div class="text-3xs text-muted">Vouched 3 community incident alerts.</div>
-                            </div>
-                        </div>
+                    <div class="achievements-grid-new" id="achievements-grid">
+                        <!-- Populated by loadAchievements() -->
                     </div>
                 </section>
 
@@ -1241,42 +1228,7 @@
                     </div>
                 </section>
 
-                <!-- Account Settings -->
-                <section class="section">
-                    <div class="section-heading">
-                        <h2 class="section-title">Settings Shortcuts</h2>
-                    </div>
 
-                    <div class="card">
-                        <div class="settings-section">
-                            <a href="#" class="list-item">
-                                <div class="list-item-icon"><i data-lucide="bell"></i></div>
-                                <div class="list-item-body">
-                                    <div class="list-item-title">Notifications</div>
-                                    <div class="list-item-desc">Check-in triggers, geo-fencing alerts, and system news.
-                                    </div>
-                                </div>
-                                <div class="list-item-action"><i data-lucide="chevron-right"></i></div>
-                            </a>
-                            <a href="#" class="list-item">
-                                <div class="list-item-icon list-item-icon--turquoise"><i data-lucide="lock"></i></div>
-                                <div class="list-item-body">
-                                    <div class="list-item-title">Privacy &amp; Encryption</div>
-                                    <div class="list-item-desc">Control coordinates sharing, telemetry and logs.</div>
-                                </div>
-                                <div class="list-item-action"><i data-lucide="chevron-right"></i></div>
-                            </a>
-                            <a href="#" class="list-item">
-                                <div class="list-item-icon"><i data-lucide="languages"></i></div>
-                                <div class="list-item-body">
-                                    <div class="list-item-title">Language Selector</div>
-                                    <div class="list-item-desc">English (India) - Change locale settings.</div>
-                                </div>
-                                <div class="list-item-action"><i data-lucide="chevron-right"></i></div>
-                            </a>
-                        </div>
-                    </div>
-                </section>
 
                 <!-- Sign Out -->
                 <a href="#view-landing" class="btn btn-ghost btn-block sign-out-btn logout-trigger">
@@ -1335,6 +1287,32 @@
     </div>
 
 
+
+    <!-- Achievement Detail Modal -->
+    <div class="modal-overlay" id="achievement-modal">
+        <div class="modal-card" style="max-width:360px;">
+            <button class="modal-close" id="achievement-modal-close" aria-label="Close">
+                <i data-lucide="x"></i>
+            </button>
+            <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--space-sm);">
+                <div class="achievement-badge-icon" id="ach-modal-icon" style="width:56px;height:56px;margin-bottom:4px;">
+                    <i data-lucide="award" id="ach-modal-icon-inner"></i>
+                </div>
+                <h3 class="modal-title" id="ach-modal-title" style="font-size:var(--font-size-md);font-weight:var(--font-weight-bold);color:var(--color-text-primary);"></h3>
+                <p class="text-xs text-muted" id="ach-modal-desc" style="line-height:1.5;"></p>
+                <div style="width:100%;margin-top:var(--space-xs);">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                        <span class="text-3xs text-muted" id="ach-modal-progress-label"></span>
+                        <span class="text-3xs font-semibold" id="ach-modal-pct" style="color:var(--color-primary);"></span>
+                    </div>
+                    <div class="sim-progress-bar">
+                        <div class="sim-progress-fill" id="ach-modal-bar" style="width:0%;transition:width 0.5s ease;"></div>
+                    </div>
+                </div>
+                <p class="text-3xs text-muted" id="ach-modal-unlock-date" style="margin-top:var(--space-xs);"></p>
+            </div>
+        </div>
+    </div>
 
     <!-- Bottom Navigation -->
     <nav class="bottom-nav" aria-label="Main navigation">

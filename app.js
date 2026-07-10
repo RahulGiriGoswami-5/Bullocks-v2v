@@ -251,15 +251,25 @@ function initApp() {
     if (alertContactsBtn) {
         alertContactsBtn.addEventListener('click', () => {
             closeEmergencySheet();
+            logToolUsage('alert_contacts');
             triggerSOS();
         });
     }
     if (decoyModeBtn) {
         decoyModeBtn.addEventListener('click', () => {
             closeEmergencySheet();
+            logToolUsage('decoy_mode');
             enterGuestMode();
         });
     }
+
+    // Log emergency call link taps
+    document.querySelectorAll('a[href="tel:112"], a[href="tel:102"], a[href="tel:100"]').forEach(link => {
+        link.addEventListener('click', () => {
+            const key = 'call_' + link.getAttribute('href').replace('tel:', '');
+            logToolUsage(key);
+        });
+    });
     if (exploreLinkBtn && exploreSection) {
         exploreLinkBtn.addEventListener('click', () => {
             exploreSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -572,6 +582,7 @@ function initApp() {
             if (result) {
                 showToast('Safety concern reported anonymously.');
                 mapInstance.closePopup(popup);
+                logReportContribution(result.id || null);
                 await renderReportPins();
             } else {
                 showToast('Could not save report. Please try again.');
@@ -807,6 +818,7 @@ function initApp() {
                 lucide.createIcons();
                 showToast(`Route check-in started: ${durationMins} mins.`);
 
+                logCheckin(dest, durationMins);
                 runCheckinCountdown(totalSeconds);
             }
         });
@@ -957,6 +969,7 @@ function initApp() {
             inputReportDesc.value = "";
 
             showToast("Report submitted anonymously!");
+            logReportContribution(null);
 
             // Auto toggle to Community Feed tab
             toggleReportTabs('feed');
@@ -1161,7 +1174,171 @@ function initApp() {
         });
     })();
 
-} async function loadTrustedContacts() {
+} 
+
+// ==========================================
+// SUPABASE ACTIVITY LOG HELPERS
+// ==========================================
+async function logToolUsage(toolKey) {
+    try {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) return;
+        await supabaseClient.from('tool_usage_log').insert({ user_id: user.id, tool_key: toolKey });
+    } catch (e) { console.warn('logToolUsage:', e); }
+}
+
+async function logCheckin(destination, durationMinutes) {
+    try {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) return;
+        await supabaseClient.from('safe_checkins').insert({ user_id: user.id, destination, duration_minutes: durationMinutes });
+    } catch (e) { console.warn('logCheckin:', e); }
+}
+
+async function logReportContribution(reportId) {
+    try {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) return;
+        await supabaseClient.from('user_report_log').insert({ user_id: user.id, report_id: reportId || null });
+    } catch (e) { console.warn('logReportContribution:', e); }
+}
+
+// ==========================================
+// ACHIEVEMENTS — loadAchievements() + Modal
+// ==========================================
+const ACHIEVEMENTS_DEF = [
+    { key: 'guardian_circle',  title: 'Guardian Circle',    desc: 'Build your inner circle of trust — add 5 people who can be alerted in an emergency.',   icon: 'users',        target: 5, color: 'gold'   },
+    { key: 'safe_streak',      title: 'Safe Streak',        desc: 'Stay consistent — complete a safe check-in on 7 consecutive days.',                       icon: 'flame',        target: 7, color: 'gold'   },
+    { key: 'community_watcher',title: 'Community Watcher',  desc: 'Help your community — contribute 5 anonymous incident reports.',                           icon: 'file-check',   target: 5, color: 'gold'   },
+    { key: 'response_ready',   title: 'Response Ready',     desc: 'Know your tools — use 4 distinct safety features (SOS, alert contacts, decoy mode, calls).', icon: 'siren',        target: 4, color: 'gold'   },
+    { key: 'verified_guardian',title: 'Verified Guardian',  desc: 'Complete your safety profile — full name, phone number, and a verified email address.',      icon: 'shield-check', target: 1, color: 'gold'   }
+];
+
+function calcCheckinStreak(rows) {
+    if (!rows || rows.length === 0) return 0;
+    const days = [...new Set(rows.map(r => r.created_at.substring(0, 10)))].sort().reverse();
+    const today = new Date().toISOString().substring(0, 10);
+    if (days[0] !== today && days[0] !== new Date(Date.now() - 86400000).toISOString().substring(0, 10)) return 0;
+    let streak = 1;
+    for (let i = 0; i < days.length - 1; i++) {
+        const diff = (new Date(days[i]) - new Date(days[i + 1])) / 86400000;
+        if (diff === 1) streak++; else break;
+    }
+    return streak;
+}
+
+async function loadAchievements() {
+    const container = document.getElementById('achievements-grid');
+    if (!container) return;
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        container.innerHTML = `
+            <p class="text-muted text-xs" style="grid-column:1/-1;text-align:center;padding:var(--space-base) 0;">
+                <i data-lucide="lock" style="width:14px;height:14px;vertical-align:middle;"></i>
+                Login to track your achievement progress.
+            </p>`;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        return;
+    }
+
+    // Fetch all data in parallel
+    const [
+        { count: contactCount },
+        { data: checkins },
+        { count: reportCount },
+        { data: toolRows },
+        { data: profile }
+    ] = await Promise.all([
+        supabaseClient.from('trusted_contacts').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+        supabaseClient.from('safe_checkins').select('created_at').eq('user_id', user.id).order('created_at', { ascending: false }),
+        supabaseClient.from('user_report_log').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+        supabaseClient.from('tool_usage_log').select('tool_key').eq('user_id', user.id),
+        supabaseClient.from('profiles').select('full_name, phone').eq('id', user.id).single()
+    ]);
+
+    const distinctTools = toolRows ? new Set(toolRows.map(r => r.tool_key)).size : 0;
+    const isProfileComplete = !!(profile && profile.full_name && profile.phone && user.email_confirmed_at);
+
+    const progress = {
+        guardian_circle:   contactCount || 0,
+        safe_streak:       calcCheckinStreak(checkins),
+        community_watcher: reportCount || 0,
+        response_ready:    distinctTools,
+        verified_guardian: isProfileComplete ? 1 : 0
+    };
+
+    container.innerHTML = '';
+    ACHIEVEMENTS_DEF.forEach(ach => {
+        const current = progress[ach.key] || 0;
+        const unlocked = current >= ach.target;
+        const card = document.createElement('div');
+        card.className = 'card achievement-card-new';
+        card.style.cursor = 'pointer';
+        card.setAttribute('data-ach-key', ach.key);
+        card.innerHTML = `
+            <div class="achievement-badge-icon ${unlocked ? 'badge-gold' : 'badge-silver'}">
+                <i data-lucide="${ach.icon}"></i>
+                ${!unlocked ? '<span class="ach-lock-overlay"><i data-lucide="lock"></i></span>' : ''}
+            </div>
+            <div>
+                <div class="font-semibold text-xs text-navy">${ach.title}</div>
+                <div class="text-3xs text-muted">${unlocked ? '\u2713 Unlocked' : current + '/' + ach.target}</div>
+            </div>`;
+        card.addEventListener('click', () => openAchievementModal(ach, current, checkins, toolRows));
+        container.appendChild(card);
+    });
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function openAchievementModal(ach, current, checkins, toolRows) {
+    const modal     = document.getElementById('achievement-modal');
+    const iconWrap  = document.getElementById('ach-modal-icon');
+    const iconInner = document.getElementById('ach-modal-icon-inner');
+    const titleEl   = document.getElementById('ach-modal-title');
+    const descEl    = document.getElementById('ach-modal-desc');
+    const labelEl   = document.getElementById('ach-modal-progress-label');
+    const pctEl     = document.getElementById('ach-modal-pct');
+    const barEl     = document.getElementById('ach-modal-bar');
+    const dateEl    = document.getElementById('ach-modal-unlock-date');
+    if (!modal) return;
+
+    const unlocked = current >= ach.target;
+    const pct      = Math.min(100, Math.round((current / ach.target) * 100));
+
+    if (iconWrap)  { iconWrap.className = 'achievement-badge-icon ' + (unlocked ? 'badge-gold' : 'badge-silver'); }
+    if (iconInner) { iconInner.setAttribute('data-lucide', ach.icon); }
+    if (titleEl)   titleEl.textContent = ach.title;
+    if (descEl)    descEl.textContent  = ach.desc;
+    if (labelEl)   labelEl.textContent = `${current} of ${ach.target}`;
+    if (pctEl)     pctEl.textContent   = pct + '%';
+
+    // Animate bar after a tick so the transition fires
+    if (barEl) { barEl.style.width = '0%'; setTimeout(() => { barEl.style.width = pct + '%'; }, 30); }
+
+    // Unlock date
+    if (dateEl) {
+        if (unlocked) {
+            let unlockDate = null;
+            if (ach.key === 'safe_streak' && checkins && checkins.length) {
+                unlockDate = checkins[checkins.length - 1].created_at;
+            } else if (ach.key === 'response_ready' && toolRows && toolRows.length) {
+                unlockDate = toolRows[0].created_at;
+            }
+            dateEl.textContent = unlockDate
+                ? 'Unlocked ' + new Date(unlockDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                : '\u2713 Achievement Unlocked';
+        } else {
+            dateEl.textContent = unlocked ? '' : 'Keep going — you\'re ' + (ach.target - current) + ' away!';
+        }
+    }
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    modal.classList.add('active');
+}
+
+async function loadTrustedContacts() {
 
     const container = document.getElementById("trustedContacts");
 
@@ -1429,11 +1606,20 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
 
         initApp();
-
         loadTrustedContacts();
+        loadAchievements();
+
+        // Wire achievement modal close
+        const achCloseBtn = document.getElementById('achievement-modal-close');
+        if (achCloseBtn) achCloseBtn.addEventListener('click', () => {
+            document.getElementById('achievement-modal').classList.remove('active');
+        });
+        document.getElementById('achievement-modal')?.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('achievement-modal'))
+                document.getElementById('achievement-modal').classList.remove('active');
+        });
 
         const addBtn = document.getElementById("showAddContact");
-
         if (addBtn) {
             addBtn.addEventListener("click", () => {
                 document.getElementById("addContactForm").style.display = "block";
@@ -1459,11 +1645,20 @@ if (document.readyState === 'loading') {
 } else {
 
     initApp();
-
     loadTrustedContacts();
+    loadAchievements();
+
+    // Wire achievement modal close
+    const achCloseBtn = document.getElementById('achievement-modal-close');
+    if (achCloseBtn) achCloseBtn.addEventListener('click', () => {
+        document.getElementById('achievement-modal').classList.remove('active');
+    });
+    document.getElementById('achievement-modal')?.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('achievement-modal'))
+            document.getElementById('achievement-modal').classList.remove('active');
+    });
 
     const addBtn = document.getElementById("showAddContact");
-
     if (addBtn) {
         addBtn.addEventListener("click", () => {
             document.getElementById("addContactForm").style.display = "block";
