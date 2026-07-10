@@ -1048,28 +1048,25 @@ textarea:focus-visible {
 }
 
 .input-icon-wrapper .form-input {
-    padding-left: 44px;
-}
-.input-icon-wrapper .input-icon {
-    position: absolute;
-    left: 4px;
-    top: 50%;
-    transform: translateY(-50%);
-    /* 36px slot so the icon has breathing room from the border */
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-text-muted);
-    pointer-events: none;
+    padding-left: 40px;
 }
 
-/* Force the inner SVG (Lucide) to a consistent, refined size */
+.input-icon-wrapper .input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--color-text-muted);
+    pointer-events: none;
+    flex-shrink: 0;
+}
+
 .input-icon-wrapper .input-icon svg {
     width: 16px !important;
     height: 16px !important;
-    flex-shrink: 0;
+    display: block;
 }
 
 .filter-chips {
