@@ -4521,7 +4521,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 /* ==========================================
-   USER REPORTS MODAL
+   USER REPORTS MODAL & STREAK MODAL
    ========================================== */
 .user-reports-list {
     max-height: 400px;
@@ -4532,50 +4532,33 @@ input[type="number"]::-webkit-outer-spin-button {
     padding-right: var(--space-xs);
 }
 
-.user-report-item {
-    background: var(--color-bg-subtle);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: var(--space-sm);
+.streak-history-list {
+    max-height: 300px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-top: var(--space-md);
+    padding-right: var(--space-xs);
+}
+
+.streak-history-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-sm);
 }
 
-.user-report-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.user-report-title {
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-semibold);
+.streak-history-item .date {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
     color: var(--color-text-primary);
-    text-transform: capitalize;
 }
 
-.user-report-date {
+.streak-history-item .time {
     font-size: var(--font-size-3xs);
     color: var(--color-text-muted);
-}
-
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 8px;
-    border-radius: var(--radius-sm);
-    font-size: var(--font-size-3xs);
-    font-weight: var(--font-weight-semibold);
-}
-
-.status-badge-pending {
-    background: rgba(251, 191, 36, 0.1);
-    color: #f59e0b; /* Amber */
-}
-
-.status-badge-completed {
-    background: rgba(52, 211, 153, 0.1);
-    color: var(--color-emerald);
 }

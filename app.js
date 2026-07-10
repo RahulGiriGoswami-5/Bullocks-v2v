@@ -1214,17 +1214,49 @@ const ACHIEVEMENTS_DEF = [
     { key: 'verified_guardian',title: 'Verified Guardian',  desc: 'Complete your safety profile — full name, phone number, and a verified email address.',      icon: 'shield-check', target: 1, color: 'gold'   }
 ];
 
-function calcCheckinStreak(rows) {
-    if (!rows || rows.length === 0) return 0;
-    const days = [...new Set(rows.map(r => r.created_at.substring(0, 10)))].sort().reverse();
-    const today = new Date().toISOString().substring(0, 10);
-    if (days[0] !== today && days[0] !== new Date(Date.now() - 86400000).toISOString().substring(0, 10)) return 0;
-    let streak = 1;
-    for (let i = 0; i < days.length - 1; i++) {
-        const diff = (new Date(days[i]) - new Date(days[i + 1])) / 86400000;
-        if (diff === 1) streak++; else break;
+function calcAllStreakStats(rows) {
+    if (!rows || rows.length === 0) return { current: 0, longest: 0, history: [] };
+    const dates = [...new Set(rows.map(r => new Date(r.created_at).toISOString().split('T')[0]))].sort().reverse();
+    
+    const history = [...dates]; // For modal display
+    let currentStreak = 1;
+    let longestStreak = 1;
+    let tempStreak = 1;
+
+    // Current Streak logic
+    const today = new Date().toISOString().split('T')[0];
+    const latestDate = dates[0];
+    
+    // If the latest checkin is older than yesterday, current streak is 0
+    let diffDaysLatest = Math.floor((new Date(today) - new Date(latestDate)) / (1000 * 60 * 60 * 24));
+    if (diffDaysLatest > 1) {
+        currentStreak = 0;
     }
-    return streak;
+
+    for (let i = 0; i < dates.length - 1; i++) {
+        let diff = Math.floor((new Date(dates[i]) - new Date(dates[i+1])) / (1000 * 60 * 60 * 24));
+        
+        // For current streak calculation
+        if (i < currentStreak && currentStreak > 0) {
+            if (diff === 1) currentStreak++;
+        }
+
+        // For longest streak calculation
+        if (diff === 1) {
+            tempStreak++;
+            if (tempStreak > longestStreak) longestStreak = tempStreak;
+        } else {
+            tempStreak = 1;
+        }
+    }
+
+    if (currentStreak === 1 && diffDaysLatest > 1) currentStreak = 0;
+
+    return { current: currentStreak, longest: longestStreak, history };
+}
+
+function calcCheckinStreak(rows) {
+    return calcAllStreakStats(rows).current;
 }
 
 async function loadAchievements() {
@@ -1267,9 +1299,15 @@ async function loadAchievements() {
         profileReportsCountEl.textContent = `${reportsSubmittedCount} Reports`;
     }
 
+    const streakStats = calcAllStreakStats(checkins);
+    const profileStreakCountEl = document.getElementById('profile-streak-count');
+    if (profileStreakCountEl) {
+        profileStreakCountEl.textContent = `${streakStats.current} Days`;
+    }
+
     const progress = {
         guardian_circle:   contactCount || 0,
-        safe_streak:       calcCheckinStreak(checkins),
+        safe_streak:       streakStats.current,
         community_watcher: reportsSubmittedCount,
         response_ready:    distinctTools,
         verified_guardian: isProfileComplete ? 1 : 0
@@ -1352,30 +1390,51 @@ async function loadAchievements() {
                 // 3. Render
                 let completedCount = 0;
                 userReportsList.innerHTML = reportsData.map(report => {
-                    // Mock Status: If it's more than 2 hours old, call it "Completed". Otherwise "Pending".
-                    const ageMs = Date.now() - new Date(report.created_at).getTime();
-                    const isCompleted = ageMs > (2 * 60 * 60 * 1000);
-                    if (isCompleted) completedCount++;
-
                     const dateStr = new Date(report.created_at).toLocaleDateString('en-IN', {
                         day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
                     });
+                    
+                    let categoryLabel = report.category.charAt(0).toUpperCase() + report.category.slice(1);
+                    if (report.category === 'unsafe-area') categoryLabel = 'Unsafe Area/lighting';
+
+                    let icon = 'alert-triangle';
+                    let severityClass = 'badge-yellow';
+                    let severityLabel = 'Moderate';
+                    let borderClass = 'border-left-warning';
+
+                    if (report.category === 'harassment' || report.category === 'stalking' || report.category === 'infrastructure') {
+                        icon = 'eye-off';
+                        severityClass = 'badge-red';
+                        severityLabel = 'High';
+                        borderClass = 'border-left-high';
+                    }
 
                     return `
-                        <div class="user-report-item">
-                            <div class="user-report-info">
-                                <span class="user-report-title">${report.category.replace('-', ' ')}</span>
-                                <span class="user-report-date">${dateStr}</span>
+                        <div class="card feed-report-card ${borderClass}" style="margin-bottom: 0;">
+                            <div class="feed-card-header">
+                                <div class="reporter-info-flex">
+                                    <div class="avatar avatar-md avatar-turquoise"><i data-lucide="user"></i></div>
+                                    <div>
+                                        <div class="reporter-name">You <span class="verification-badge" title="Verified Reporter"><i data-lucide="badge-check"></i></span></div>
+                                        <span class="post-time">${dateStr}</span>
+                                    </div>
+                                </div>
+                                <span class="badge ${severityClass} font-semibold">
+                                    <i data-lucide="alert-octagon"></i> ${severityLabel}
+                                </span>
                             </div>
-                            <div class="status-badge ${isCompleted ? 'status-badge-completed' : 'status-badge-pending'}">
-                                <i data-lucide="${isCompleted ? 'check-circle' : 'clock'}" style="width:12px;height:12px;"></i>
-                                ${isCompleted ? 'Completed' : 'Pending'}
+                            <div class="feed-card-body">
+                                <div class="category-indicator">
+                                    <i data-lucide="${icon}" class="text-coral"></i>
+                                    <span class="font-semibold text-xs text-navy">${categoryLabel}</span>
+                                </div>
+                                <p class="feed-report-desc text-xs" style="margin-top: 6px;">Your submitted report is active.</p>
                             </div>
                         </div>
                     `;
                 }).join('');
                 
-                userReportsSummary.textContent = `${completedCount} of ${reportsData.length} Completed`;
+                userReportsSummary.textContent = `${reportsData.length} Reports Submitted`;
                 if (typeof lucide !== 'undefined') lucide.createIcons();
 
             } catch (err) {
@@ -1394,6 +1453,61 @@ async function loadAchievements() {
     if (userReportsModal) {
         userReportsModal.addEventListener('click', (e) => {
             if (e.target === userReportsModal) userReportsModal.classList.remove('active');
+        });
+    }
+
+    const btnViewAllReports = document.getElementById('btn-view-all-reports');
+    if (btnViewAllReports) {
+        btnViewAllReports.addEventListener('click', () => {
+            if (userReportsModal) userReportsModal.classList.remove('active');
+            const navReportBtn = document.getElementById('nav-report');
+            if (navReportBtn) navReportBtn.click();
+        });
+    }
+
+    // Streak Modal Logic
+    const profileStreakCard = document.getElementById('profile-streak-card');
+    const streakModal = document.getElementById('streak-modal');
+    const streakModalClose = document.getElementById('streak-modal-close');
+    const streakHistoryList = document.getElementById('streak-history-list');
+    
+    if (profileStreakCard) {
+        profileStreakCard.addEventListener('click', () => {
+            if (!streakModal) return;
+            
+            const sStats = calcAllStreakStats(checkins);
+            document.getElementById('streak-current').textContent = sStats.current;
+            document.getElementById('streak-longest').textContent = sStats.longest;
+            
+            if (sStats.history.length === 0) {
+                streakHistoryList.innerHTML = `<p class="text-xs text-muted">No check-ins yet.</p>`;
+            } else {
+                streakHistoryList.innerHTML = sStats.history.map(dStr => {
+                    const d = new Date(dStr);
+                    const formattedDate = d.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
+                    return `
+                        <div class="streak-history-item">
+                            <span class="date">${formattedDate}</span>
+                            <span class="time"><i data-lucide="check-circle" class="text-emerald" style="width:12px;height:12px;vertical-align:-2px;margin-right:4px;"></i>Checked in</span>
+                        </div>
+                    `;
+                }).join('');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+            
+            streakModal.classList.add('active');
+        });
+    }
+
+    if (streakModalClose) {
+        streakModalClose.addEventListener('click', () => {
+            if (streakModal) streakModal.classList.remove('active');
+        });
+    }
+
+    if (streakModal) {
+        streakModal.addEventListener('click', (e) => {
+            if (e.target === streakModal) streakModal.classList.remove('active');
         });
     }
 }

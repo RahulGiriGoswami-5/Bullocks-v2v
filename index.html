@@ -1193,10 +1193,10 @@
                     </div>
 
                     <div class="profile-stats-row">
-                        <div class="profile-stat-box">
+                        <div class="profile-stat-box" id="profile-streak-card" style="cursor: pointer;">
                             <div class="stat-icon-wrapper text-coral"><i data-lucide="flame"></i></div>
                             <div>
-                                <div class="stat-value">15 Days</div>
+                                <div class="stat-value" id="profile-streak-count">15 Days</div>
                                 <div class="stat-label">Safety Streak</div>
                             </div>
                         </div>
@@ -1335,8 +1335,46 @@
             
             <p class="text-xs text-muted" id="user-reports-summary" style="margin-bottom: var(--space-md);">0 of 0 Completed</p>
             
-            <div id="user-reports-list" class="user-reports-list">
+            <div id="user-reports-list" class="user-reports-list" style="margin-bottom: var(--space-md);">
                 <!-- Populated by JS -->
+            </div>
+            
+            <button id="btn-view-all-reports" class="btn btn-outline btn-block" style="border-color: var(--color-border); color: var(--color-text-primary);">
+                View All Community Reports
+            </button>
+        </div>
+    </div>
+
+    <!-- Streak Detail Modal -->
+    <div class="modal-overlay" id="streak-modal">
+        <div class="modal-card" style="max-width:360px;">
+            <button class="modal-close" id="streak-modal-close" aria-label="Close">
+                <i data-lucide="x"></i>
+            </button>
+            <div style="display:flex;flex-direction:column;align-items:center;text-align:center;">
+                <div class="stat-icon-wrapper text-coral" style="width:56px;height:56px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,107,107,0.1);">
+                    <i data-lucide="flame" style="width:28px;height:28px;"></i>
+                </div>
+                <h3 class="modal-title" style="font-size:var(--font-size-lg);margin-bottom:4px;">Safety Streak</h3>
+                <p class="text-xs text-muted">Complete safe check-ins to build your streak.</p>
+                
+                <div style="display:flex;justify-content:center;gap:32px;width:100%;margin-top:24px;border-top:1px solid var(--color-border-light);padding-top:24px;">
+                    <div>
+                        <div class="stat-value" id="streak-current" style="font-size:24px;">0</div>
+                        <div class="stat-label">Current</div>
+                    </div>
+                    <div>
+                        <div class="stat-value text-muted" id="streak-longest" style="font-size:24px;">0</div>
+                        <div class="stat-label">Longest</div>
+                    </div>
+                </div>
+                
+                <div style="width:100%;text-align:left;margin-top:24px;">
+                    <h4 class="text-sm font-semibold">Streak History</h4>
+                    <div id="streak-history-list" class="streak-history-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
