@@ -1640,6 +1640,15 @@ if (document.readyState === 'loading') {
             });
         }
 
+        // Re-render auth-dependent sections whenever session changes
+        supabaseClient.auth.onAuthStateChange((event) => {
+            if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+                loadAchievements();
+                if (typeof loadProfileTrustedContacts === 'function') loadProfileTrustedContacts();
+                if (typeof loadTrustedContacts === 'function') loadTrustedContacts();
+            }
+        });
+
     });
 
 } else {
@@ -1678,5 +1687,14 @@ if (document.readyState === 'loading') {
             }, 100);
         });
     }
+
+    // Re-render auth-dependent sections whenever session changes
+    supabaseClient.auth.onAuthStateChange((event) => {
+        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+            loadAchievements();
+            if (typeof loadProfileTrustedContacts === 'function') loadProfileTrustedContacts();
+            if (typeof loadTrustedContacts === 'function') loadTrustedContacts();
+        }
+    });
 
 }
