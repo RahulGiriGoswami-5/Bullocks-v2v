@@ -19,10 +19,8 @@
 
     if (saved === 'dark' || saved === 'light') {
         html.setAttribute('data-theme', saved);
-    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        html.setAttribute('data-theme', 'dark');
     } else {
-        html.setAttribute('data-theme', 'light');
+        html.setAttribute('data-theme', 'dark');
     }
 
     // Bind toggle button(s) — query all elements with class "theme-toggle"
