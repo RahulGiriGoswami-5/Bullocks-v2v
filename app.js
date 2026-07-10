@@ -1202,6 +1202,9 @@ function initApp() {
             .substring(0, 2)
             .toUpperCase();
 
+        // Sanitize phone for safe use inside an inline onclick attribute
+        const safePhone = String(contact.phone).replace(/[^0-9+\-\s]/g, "");
+
         container.innerHTML += `
             <div class="checkin-contact-card" style="margin-top:8px;">
 
@@ -1222,6 +1225,17 @@ function initApp() {
                         ${contact.phone}
                     </div>
 
+                    <div class="checkin-contact-actions">
+                        <a href="tel:${safePhone}" class="contact-action-btn contact-action-call">
+                            📞 Call
+                        </a>
+                        <button type="button"
+                            class="contact-action-btn contact-action-sms"
+                            onclick="sendEmergencySms('${safePhone}')">
+                            💬 SMS
+                        </button>
+                    </div>
+
                 </div>
 
                 <span class="badge badge-turquoise">
@@ -1234,6 +1248,44 @@ function initApp() {
 
     if (window.lucide) {
         lucide.createIcons();
+    }
+}
+
+// ==========================================
+// EMERGENCY CALL & SMS — Trusted Contacts
+// ==========================================
+let sahayikaEmergencyCoords = null;
+
+function buildEmergencyMessage(lat, lng) {
+    const locationLine = (lat != null && lng != null)
+        ? `https://maps.google.com/?q=${lat},${lng}`
+        : 'Location unavailable.';
+
+    return `🚨 EMERGENCY ALERT\nI have missed my Safe Check-in.\nMy last known location:\n${locationLine}\nPlease contact me immediately.`;
+}
+
+function sendEmergencySms(phone) {
+    const compose = (lat, lng) => {
+        const message = buildEmergencyMessage(lat, lng);
+        window.location.href = `sms:${phone}?body=${encodeURIComponent(message)}`;
+    };
+
+    if (sahayikaEmergencyCoords) {
+        compose(sahayikaEmergencyCoords.lat, sahayikaEmergencyCoords.lng);
+        return;
+    }
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                sahayikaEmergencyCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                compose(pos.coords.latitude, pos.coords.longitude);
+            },
+            () => compose(null, null), // denied/failed → fall back to "Location unavailable."
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+        );
+    } else {
+        compose(null, null);
     }
 }
 

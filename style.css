@@ -2806,6 +2806,53 @@ textarea:focus-visible {
     gap: var(--space-xs);
 }
 
+/* Emergency Call & SMS buttons on trusted contact cards */
+.checkin-contact-actions {
+    display: flex;
+    gap: var(--space-xs);
+    margin-top: var(--space-xs);
+}
+
+.contact-action-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 34px;
+    padding: 0 var(--space-sm);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.contact-action-call {
+    background: var(--color-success);
+    color: #fff;
+}
+
+.contact-action-call:hover {
+    background: var(--color-success-hover);
+}
+
+.contact-action-sms {
+    background: var(--color-accent);
+    color: #fff;
+}
+
+.contact-action-sms:hover {
+    background: var(--color-accent-hover);
+}
+
+@media (max-width: 480px) {
+    .checkin-contact-actions {
+        flex-direction: column;
+    }
+}
+
 
 /* =============================================
    PAGE: SOS Decoy Calculator
