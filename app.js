@@ -495,8 +495,11 @@ function initApp() {
         reportsLayer = L.layerGroup();
 
         reports.forEach((r) => {
+            const lat = r.latitude !== undefined ? r.latitude : r.lat;
+            const lng = r.longitude !== undefined ? r.longitude : r.lng;
+            if (lat === undefined || lng === undefined || lat === 0 || lng === 0) return;
             const color = categoryColors[r.category] || categoryColors['Other'];
-            const marker = L.circleMarker([r.lat, r.lng], {
+            const marker = L.circleMarker([lat, lng], {
                 radius: 8,
                 color: '#FFFFFF',
                 weight: 2,
@@ -559,7 +562,14 @@ function initApp() {
         });
 
         submitBtn.addEventListener('click', async () => {
-            if (!selectedCategory || submitBtn.disabled) return;
+            if (!selectedCategory) {
+                showToast("Missing category: Please select a report category.");
+                return;
+            }
+            if (lat === undefined || lng === undefined) {
+                showToast("Missing location: Could not determine coordinates.");
+                return;
+            }
 
             if (window.SahayikaReports) {
                 const rateCheck = window.SahayikaReports.checkRateLimit();
@@ -575,17 +585,29 @@ function initApp() {
             submitBtn.textContent = 'Submitting…';
 
             const note = noteInput.value.trim() || null;
-            const result = window.SahayikaReports
-                ? await window.SahayikaReports.addReport({ lat, lng, category: selectedCategory, note })
-                : null;
+            
+            try {
+                if (!window.SahayikaReports) {
+                    throw new Error("Reports service not initialized");
+                }
 
-            if (result) {
-                showToast('Safety concern reported anonymously.');
-                mapInstance.closePopup(popup);
-                logReportContribution(result.id || null);
-                await renderReportPins();
-            } else {
-                showToast('Could not save report. Please try again.');
+                const result = await window.SahayikaReports.addReport({ lat, lng, category: selectedCategory, note });
+                
+                if (result) {
+                    showToast('Safety concern reported anonymously.');
+                    mapInstance.closePopup(popup);
+                    logReportContribution(result.id || null);
+                    await renderReportPins();
+                } else {
+                    throw new Error("Database insertion failed to return data");
+                }
+            } catch (err) {
+                console.error(err);
+                const errorDetail = window.SahayikaReports && typeof window.SahayikaReports.mapSupabaseError === 'function'
+                    ? window.SahayikaReports.mapSupabaseError(err)
+                    : (err.message || err);
+                
+                showToast(`Could not save report: ${errorDetail}`);
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Report';
             }
@@ -900,102 +922,118 @@ function initApp() {
             if (sev === 'low') chip.classList.add('sev-low');
             else if (sev === 'moderate') chip.classList.add('sev-moderate');
             else if (sev === 'high') chip.classList.add('sev-high');
-            else if (sev === 'critical') chip.classList.add('sev-critical');
-        });
-    });
-
-    if (btnSubmitReport) {
+            else if (sev === 'critical') chi    if (btnSubmitReport) {
         btnSubmitReport.addEventListener('click', async () => {
             const type = inputReportType.value;
             const location = inputReportLoc.value || "Unknown Location";
             const desc = inputReportDesc.value;
 
-            if (!type || !desc) {
-                showToast("Please fill in incident type and description.");
+            if (!type) {
+                showToast("Missing category: Please select an incident type.");
+                return;
+            }
+            if (!desc) {
+                showToast("Please fill in the incident description.");
                 return;
             }
 
-            // Save to database via window.SahayikaReports
+            const originalText = btnSubmitReport.textContent;
+            btnSubmitReport.disabled = true;
+            btnSubmitReport.textContent = 'Submitting…';
+
             const noteWithLocation = `Location: ${location}\n${desc}`;
             let savedReportId = null;
             
-            if (window.SahayikaReports && typeof window.SahayikaReports.addReport === 'function') {
-                try {
-                    // We don't have lat/lng from the form, so pass 0,0 and rely on the text location in the note
-                    const savedReport = await window.SahayikaReports.addReport({ 
-                        lat: 0, 
-                        lng: 0, 
-                        category: type, 
-                        note: noteWithLocation 
-                    });
-                    if (savedReport && savedReport.id) {
-                        savedReportId = savedReport.id;
-                    }
-                } catch (e) {
-                    console.error("Failed to save report to DB:", e);
+            try {
+                if (!window.SahayikaReports || typeof window.SahayikaReports.addReport !== 'function') {
+                    throw new Error("Reports service not initialized");
                 }
-            }
 
-            // Format category label
-            let categoryLabel = type.charAt(0).toUpperCase() + type.slice(1);
-            if (type === 'unsafe-area') categoryLabel = 'Unsafe Area/lighting';
+                // Pass 0,0 coordinates since this is a text-based incident report form
+                const savedReport = await window.SahayikaReports.addReport({ 
+                    lat: 0, 
+                    lng: 0, 
+                    category: type, 
+                    note: noteWithLocation 
+                });
 
-            // Category Icon
-            let icon = 'alert-triangle';
-            if (type === 'harassment') icon = 'eye-off';
-            if (type === 'stalking') icon = 'eye-off';
-            if (type === 'unsafe-area') icon = 'lightbulb-off';
+                if (savedReport && savedReport.id) {
+                    savedReportId = savedReport.id;
+                } else {
+                    throw new Error("Database insertion failed to return data");
+                }
 
-            // Create new feed card
-            const newCard = document.createElement('div');
-            newCard.className = `card feed-report-card border-left-${selectedSeverity === 'critical' || selectedSeverity === 'high' ? 'high' : 'warning'}`;
-            newCard.innerHTML = `
-        <div class="feed-card-header">
-          <div class="reporter-info-flex">
-            <div class="avatar avatar-md avatar-turquoise">PD</div>
-            <div>
-              <div class="reporter-name">Priya Deshmukh <span class="verification-badge" title="Verified Reporter"><i data-lucide="badge-check"></i></span></div>
-              <span class="post-time">Just now &bull; Near ${location}</span>
+                // Format category label
+                let categoryLabel = type.charAt(0).toUpperCase() + type.slice(1);
+                if (type === 'unsafe-area') categoryLabel = 'Unsafe Area/lighting';
+
+                // Category Icon
+                let icon = 'alert-triangle';
+                if (type === 'harassment') icon = 'eye-off';
+                if (type === 'stalking') icon = 'eye-off';
+                if (type === 'unsafe-area') icon = 'lightbulb-off';
+
+                // Create new feed card
+                const newCard = document.createElement('div');
+                newCard.className = `card feed-report-card border-left-${selectedSeverity === 'critical' || selectedSeverity === 'high' ? 'high' : 'warning'}`;
+                newCard.innerHTML = `
+            <div class="feed-card-header">
+              <div class="reporter-info-flex">
+                <div class="avatar avatar-md avatar-turquoise">PD</div>
+                <div>
+                  <div class="reporter-name">Priya Deshmukh <span class="verification-badge" title="Verified Reporter"><i data-lucide="badge-check"></i></span></div>
+                  <span class="post-time">Just now &bull; Near ${location}</span>
+                </div>
+              </div>
+              <span class="badge ${selectedSeverity === 'critical' || selectedSeverity === 'high' ? 'badge-red' : 'badge-yellow'} font-semibold">
+                <i data-lucide="alert-octagon"></i> ${selectedSeverity.charAt(0).toUpperCase() + selectedSeverity.slice(1)}
+              </span>
             </div>
-          </div>
-          <span class="badge ${selectedSeverity === 'critical' || selectedSeverity === 'high' ? 'badge-red' : 'badge-yellow'} font-semibold">
-            <i data-lucide="alert-octagon"></i> ${selectedSeverity.charAt(0).toUpperCase() + selectedSeverity.slice(1)}
-          </span>
-        </div>
-        <div class="feed-card-body">
-          <div class="category-indicator">
-            <i data-lucide="${icon}" class="text-coral"></i>
-            <span class="font-semibold text-xs text-navy">${categoryLabel}</span>
-          </div>
-          <p class="feed-report-desc">"${desc}"</p>
-        </div>
-        <div class="feed-card-footer">
-          <button class="btn btn-xs btn-outline btn-helpful-trigger" data-count="0">
-            <i data-lucide="thumbs-up"></i> Helpful (0)
-          </button>
-          <button class="btn btn-xs btn-ghost text-muted"><i data-lucide="share-2"></i> Share</button>
-        </div>
-      `;
+            <div class="feed-card-body">
+              <div class="category-indicator">
+                <i data-lucide="${icon}" class="text-coral"></i>
+                <span class="font-semibold text-xs text-navy">${categoryLabel}</span>
+              </div>
+              <p class="feed-report-desc">"${desc}"</p>
+            </div>
+            <div class="feed-card-footer">
+              <button class="btn btn-xs btn-outline btn-helpful-trigger" data-count="0">
+                <i data-lucide="thumbs-up"></i> Helpful (0)
+              </button>
+              <button class="btn btn-xs btn-ghost text-muted"><i data-lucide="share-2"></i> Share</button>
+            </div>
+          `;
 
-            if (feedList) {
-                feedList.insertBefore(newCard, feedList.firstChild);
+                if (feedList) {
+                    feedList.insertBefore(newCard, feedList.firstChild);
+                }
+
+                // Re-create icons for new content
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+
+                // Clear Form ONLY if save succeeds
+                inputReportType.value = "";
+                inputReportLoc.value = "";
+                inputReportDesc.value = "";
+
+                showToast("Report submitted anonymously!");
+                
+                // Log association for the active user profile
+                logReportContribution(savedReportId);
+
+                // Auto toggle to Community Feed tab
+                toggleReportTabs('feed');
+            } catch (err) {
+                console.error(err);
+                const errorDetail = window.SahayikaReports && typeof window.SahayikaReports.mapSupabaseError === 'function'
+                    ? window.SahayikaReports.mapSupabaseError(err)
+                    : (err.message || err);
+                
+                showToast(`Could not save report: ${errorDetail}`);
+            } finally {
+                btnSubmitReport.disabled = false;
+                btnSubmitReport.textContent = originalText;
             }
-
-            // Re-create icons for new content
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-
-            // Clear Form
-            inputReportType.value = "";
-            inputReportLoc.value = "";
-            inputReportDesc.value = "";
-
-            showToast("Report submitted anonymously!");
-            
-            // Log association for the active user profile
-            logReportContribution(savedReportId);
-
-            // Auto toggle to Community Feed tab
-            toggleReportTabs('feed');
         });
     }
 
