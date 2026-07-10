@@ -55,8 +55,32 @@
 
             <div class="header-actions">
                 <button id="theme-toggle" class="btn-icon theme-toggle" aria-label="Toggle dark mode">
-                    <span class="theme-icon-light"><i data-lucide="sun"></i></span>
-                    <span class="theme-icon-dark"><i data-lucide="moon"></i></span>
+                    <svg class="theme-toggle-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <mask id="theme-mask-header">
+                            <rect x="0" y="0" width="24" height="24" fill="white" />
+                            <circle class="mask-circle" cx="12" cy="12" r="7" fill="black" />
+                        </mask>
+                        <circle class="sun-center" cx="12" cy="12" r="5" mask="url(#theme-mask-header)"
+                            fill="currentColor" />
+                        <g class="sun-rays" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="3" stroke-linecap="round" />
+                            <line x1="12" y1="21" x2="12" y2="23" stroke-linecap="round" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke-linecap="round" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke-linecap="round" />
+                            <line x1="1" y1="12" x2="3" y2="12" stroke-linecap="round" />
+                            <line x1="21" y1="12" x2="23" y2="12" stroke-linecap="round" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke-linecap="round" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke-linecap="round" />
+                        </g>
+                        <g class="moon-stars">
+                            <circle class="star star-1" cx="5" cy="7" r="0.6" fill="currentColor" />
+                            <circle class="star star-2" cx="19" cy="17" r="0.6" fill="currentColor" />
+                            <path class="star star-3"
+                                d="M19 5 L19.4 5.8 L20.2 6 L19.4 6.2 L19 7 L18.6 6.2 L17.8 6 L18.6 5.8 Z"
+                                fill="currentColor" />
+                        </g>
+                    </svg>
                 </button>
                 <label for="nav-menu-toggle" class="btn-icon nav-menu-btn" aria-label="Open menu">
                     <i data-lucide="menu"></i>
@@ -94,8 +118,32 @@
         <section id="view-landing" class="view active-view">
             <!-- Theme toggle -->
             <button class="btn-icon theme-toggle landing-theme-toggle" aria-label="Toggle dark mode">
-                <span class="theme-icon-light"><i data-lucide="sun"></i></span>
-                <span class="theme-icon-dark"><i data-lucide="moon"></i></span>
+                <svg class="theme-toggle-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <mask id="theme-mask-landing">
+                        <rect x="0" y="0" width="24" height="24" fill="white" />
+                        <circle class="mask-circle" cx="12" cy="12" r="7" fill="black" />
+                    </mask>
+                    <circle class="sun-center" cx="12" cy="12" r="5" mask="url(#theme-mask-landing)"
+                        fill="currentColor" />
+                    <g class="sun-rays" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="3" stroke-linecap="round" />
+                        <line x1="12" y1="21" x2="12" y2="23" stroke-linecap="round" />
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke-linecap="round" />
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke-linecap="round" />
+                        <line x1="1" y1="12" x2="3" y2="12" stroke-linecap="round" />
+                        <line x1="21" y1="12" x2="23" y2="12" stroke-linecap="round" />
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke-linecap="round" />
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke-linecap="round" />
+                    </g>
+                    <g class="moon-stars">
+                        <circle class="star star-1" cx="5" cy="7" r="0.6" fill="currentColor" />
+                        <circle class="star star-2" cx="19" cy="17" r="0.6" fill="currentColor" />
+                        <path class="star star-3"
+                            d="M19 5 L19.4 5.8 L20.2 6 L19.4 6.2 L19 7 L18.6 6.2 L17.8 6 L18.6 5.8 Z"
+                            fill="currentColor" />
+                    </g>
+                </svg>
             </button>
 
             <div class="landing-page-new">

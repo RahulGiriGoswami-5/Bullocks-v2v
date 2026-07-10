@@ -2094,14 +2094,185 @@ textarea:focus-visible {
     color: var(--color-text-muted);
 }
 
+/* =============================================
+   COMPONENT: Premium Theme Toggle
+   ============================================= */
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(135deg, #FFE8A1 0%, #FFFDF5 100%) !important;
+    border-color: rgba(253, 186, 116, 0.4) !important;
+    color: #B25E00 !important;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5), 0 4px 12px rgba(253, 186, 116, 0.15), var(--shadow-sm) !important;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.4s ease,
+        color 0.4s ease;
+}
+
+/* Double-layered background gradient animation for smooth transition */
+.theme-toggle::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Mode Overrides for Button */
+[data-theme="dark"] .theme-toggle {
+    border-color: rgba(99, 102, 241, 0.3) !important;
+    color: #C7D2FE !important;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15), 0 4px 16px rgba(99, 102, 241, 0.2), var(--shadow-sm) !important;
+}
+
+[data-theme="dark"] .theme-toggle::before {
+    opacity: 1;
+}
+
+/* Premium Hover & Focus Effects */
+.theme-toggle:hover {
+    transform: translateY(-3px) scale(1.06);
+}
+
+.theme-toggle:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
+html[data-theme="light"] .theme-toggle:hover {
+    box-shadow: 0 8px 20px rgba(253, 186, 116, 0.35), 0 0 10px rgba(253, 186, 116, 0.2), var(--shadow-md) !important;
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4), 0 0 12px rgba(99, 102, 241, 0.25), var(--shadow-md) !important;
+}
+
+.theme-toggle:active {
+    transform: translateY(0) scale(0.96);
+}
+
+/* SVG Icon & Morphing Elements */
+.theme-toggle-svg {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    z-index: 2;
+    transform-origin: center;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html[data-theme="light"] .theme-toggle-svg {
+    transform: rotate(0deg);
+}
+
+[data-theme="dark"] .theme-toggle-svg {
+    transform: rotate(360deg);
+}
+
+/* Twist & Scale Down Icon on Active Press */
+html[data-theme="light"] .theme-toggle:active .theme-toggle-svg {
+    transform: scale(0.7) rotate(-30deg);
+}
+
+[data-theme="dark"] .theme-toggle:active .theme-toggle-svg {
+    transform: scale(0.7) rotate(390deg);
+}
+
+.sun-center {
+    transition: r 0.5s cubic-bezier(0.4, 0, 0.2, 1), fill 0.4s ease;
+}
+
+.mask-circle {
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translate(14px, -14px);
+    /* Moves mask circle out of the way */
+}
+
+.sun-rays {
+    transform-origin: center;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+    opacity: 1;
+}
+
+.moon-stars {
+    transform-origin: center;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+    opacity: 0;
+    transform: scale(0) rotate(-45deg);
+}
+
+/* Dark Mode Morph States */
+[data-theme="dark"] .sun-center {
+    r: 7px;
+}
+
+[data-theme="dark"] .mask-circle {
+    transform: translate(4px, -4px);
+    /* Masks to crescent shape */
+}
+
+[data-theme="dark"] .sun-rays {
+    transform: rotate(45deg) scale(0);
+    opacity: 0;
+}
+
+[data-theme="dark"] .moon-stars {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+
+/* Star Twinkle Keyframes & Timing */
+@keyframes twinkle {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+.star-1 {
+    animation: twinkle 3s infinite ease-in-out;
+}
+
+.star-2 {
+    animation: twinkle 4s infinite ease-in-out;
+    animation-delay: 1.2s;
+}
+
+.star-3 {
+    animation: twinkle 2.5s infinite ease-in-out;
+    animation-delay: 0.6s;
+    transform-origin: 19px 6px;
+}
+
+/* Landing Toggle Positioning */
 .landing-theme-toggle {
     position: fixed;
     top: var(--space-base);
     right: var(--space-base);
     z-index: 10;
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-sm);
 }
 
 
