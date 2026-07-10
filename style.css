@@ -4186,3 +4186,14 @@ html[data-theme="light"] .btn:active {
 html[data-theme="light"] .device-mockup {
     animation: float-landing-mockup 6s ease-in-out infinite;
 }
+
+/* Auth form error / status messages */
+.form-error {
+    font-size: var(--font-size-2xs);
+    color: #EF4444;
+    margin-top: -4px;
+}
+
+.form-error.form-success {
+    color: var(--color-success);
+}

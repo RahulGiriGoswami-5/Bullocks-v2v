@@ -83,7 +83,7 @@
                 <a href="#view-responders" class="nav-menu-link"><i data-lucide="users"></i> Responders</a>
                 <a href="#view-profile" class="nav-menu-link"><i data-lucide="user"></i> Profile</a>
                 <div class="nav-menu-divider"></div>
-                <a href="#view-landing" class="nav-menu-link"><i data-lucide="log-out"></i> Sign Out</a>
+                <a href="#view-landing" class="nav-menu-link logout-trigger"><i data-lucide="log-out"></i> Sign Out</a>
             </div>
         </div>
     </div>
@@ -222,7 +222,8 @@
                                 </label>
                                 <a href="#" class="text-sm text-coral" style="font-weight:500;">Forgot password?</a>
                             </div>
-                            <a href="#view-home" class="btn btn-primary btn-block">Login</a>
+                            <button type="submit" class="btn btn-primary btn-block" id="login-submit-btn">Login</button>
+                            <p class="form-error" id="login-error" style="display:none;"></p>
                             <div class="auth-divider">or continue with</div>
                             <button type="button" class="btn btn-outline btn-block">
                                 <i data-lucide="smartphone"></i>
@@ -268,7 +269,9 @@
                                         required>
                                 </div>
                             </div>
-                            <a href="#view-home" class="btn btn-primary btn-block">Sign Up</a>
+                            <button type="submit" class="btn btn-primary btn-block" id="signup-submit-btn">Sign
+                                Up</button>
+                            <p class="form-error" id="signup-error" style="display:none;"></p>
                         </form>
                     </div>
                 </div>
@@ -1094,8 +1097,8 @@
                     <div class="profile-top">
                         <div class="avatar avatar-2xl">PD</div>
                         <div class="profile-info-text">
-                            <h1 class="profile-name">Priya Deshmukh</h1>
-                            <p class="profile-email">priya.d@email.com</p>
+                            <h1 class="profile-name" id="profile-name">Priya Deshmukh</h1>
+                            <p class="profile-email" id="profile-email">priya.d@email.com</p>
                             <span class="badge badge-success-light text-emerald"><i data-lucide="shield-check"
                                     class="w-3.5 h-3.5 inline-block mr-xs"></i> Verified Profile</span>
                         </div>
@@ -1237,7 +1240,7 @@
                 </section>
 
                 <!-- Sign Out -->
-                <a href="#view-landing" class="btn btn-ghost btn-block sign-out-btn">
+                <a href="#view-landing" class="btn btn-ghost btn-block sign-out-btn logout-trigger">
                     <i data-lucide="log-out"></i>
                     Sign Out
                 </a>
@@ -1326,6 +1329,9 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script>if (typeof lucide !== 'undefined') { lucide.createIcons(); }</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="supabase-client.js"></script>
+    <script src="auth.js"></script>
     <script src="app.js"></script>
 </body>
 
