@@ -188,6 +188,32 @@ function initApp() {
         tabSignup.addEventListener('click', () => switchAuthTab('signup'));
     }
 
+    // ==========================================
+    // GUEST EMERGENCY ACCESS — no login required
+    // ==========================================
+    function enterGuestMode() {
+        try {
+            if (!localStorage.getItem('sahayika-guest')) {
+                localStorage.setItem('sahayika-guest', 'true');
+            }
+        } catch (e) {
+            console.warn('localStorage unavailable for guest mode:', e);
+        }
+        if (authModal) authModal.classList.remove('active');
+        window.location.hash = '#view-sos';
+        navigateTo('#view-sos');
+    }
+
+    const guestEmergencyBtn = document.getElementById('guest-emergency-btn');
+    if (guestEmergencyBtn) {
+        guestEmergencyBtn.addEventListener('click', enterGuestMode);
+    }
+
+    const modalGuestBtn = document.getElementById('modal-guest-btn');
+    if (modalGuestBtn) {
+        modalGuestBtn.addEventListener('click', enterGuestMode);
+    }
+
     // Smooth scroll CTA
     const scrollBtn = document.querySelector('.scroll-to-info');
     if (scrollBtn) {
