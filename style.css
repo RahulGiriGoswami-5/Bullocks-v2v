@@ -428,7 +428,7 @@ textarea:focus-visible {
     padding: 0 var(--page-padding);
 }
 
-.header-logo {
+.sahayika-logo {
     font-family: var(--font-title);
     font-size: var(--font-size-md);
     font-weight: var(--font-weight-extrabold);
@@ -436,15 +436,52 @@ textarea:focus-visible {
     display: flex;
     align-items: center;
     gap: var(--space-xs);
+    text-decoration: none;
 }
 
-.header-logo::before {
-    content: '';
-    width: 8px;
-    height: 18px;
-    background: var(--color-accent);
+/* Sizing Modifiers */
+/* Small logo (Header) */
+.sahayika-logo--sm .sahayika-logo-icon {
+    width: 24px;
+    height: 24px;
+    background: var(--color-primary);
+    color: #FFFFFF;
     border-radius: var(--radius-sm);
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sahayika-logo--sm .sahayika-logo-icon svg,
+.sahayika-logo--sm .sahayika-logo-icon i {
+    width: 12px;
+    height: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Large logo (Landing / Modals) */
+.sahayika-logo--lg .sahayika-logo-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--color-primary);
+    color: #FFFFFF;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sahayika-logo--lg .sahayika-logo-icon svg,
+.sahayika-logo--lg .sahayika-logo-icon i {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-brand .sahayika-logo {
+    margin-bottom: var(--space-xs);
 }
 
 .header-actions {
@@ -1229,31 +1266,6 @@ textarea:focus-visible {
     border-bottom: 1px solid var(--color-border);
 }
 
-.landing-brand-logo {
-    font-family: var(--font-title);
-    font-size: var(--font-size-md);
-    font-weight: var(--font-weight-extrabold);
-    color: var(--color-primary);
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-}
-
-.landing-brand-logo .logo-icon {
-    width: 36px;
-    height: 36px;
-    background: var(--color-primary);
-    color: #FFFFFF;
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.landing-brand-logo .logo-icon svg {
-    width: 18px;
-    height: 18px;
-}
 
 .hero-split {
     display: flex;
@@ -2051,22 +2063,6 @@ textarea:focus-visible {
     margin-bottom: var(--space-base);
 }
 
-.modal-brand .logo-mark {
-    width: 48px;
-    height: 48px;
-    background: var(--color-primary);
-    color: #FFFFFF;
-    border-radius: var(--radius-xl);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: var(--space-xs);
-}
-
-.modal-brand .logo-mark svg {
-    width: 24px;
-    height: 24px;
-}
 
 .modal-title {
     font-family: var(--font-title);
@@ -3883,8 +3879,7 @@ a.list-item:hover {
         background: var(--color-primary-light);
     }
 
-    .landing-brand-logo,
-    .header-logo {
+    .sahayika-logo {
         font-size: var(--font-size-lg);
     }
 
