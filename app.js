@@ -905,7 +905,7 @@ function initApp() {
     });
 
     if (btnSubmitReport) {
-        btnSubmitReport.addEventListener('click', () => {
+        btnSubmitReport.addEventListener('click', async () => {
             const type = inputReportType.value;
             const location = inputReportLoc.value || "Unknown Location";
             const desc = inputReportDesc.value;
@@ -913,6 +913,27 @@ function initApp() {
             if (!type || !desc) {
                 showToast("Please fill in incident type and description.");
                 return;
+            }
+
+            // Save to database via window.SahayikaReports
+            const noteWithLocation = `Location: ${location}\n${desc}`;
+            let savedReportId = null;
+            
+            if (window.SahayikaReports && typeof window.SahayikaReports.addReport === 'function') {
+                try {
+                    // We don't have lat/lng from the form, so pass 0,0 and rely on the text location in the note
+                    const savedReport = await window.SahayikaReports.addReport({ 
+                        lat: 0, 
+                        lng: 0, 
+                        category: type, 
+                        note: noteWithLocation 
+                    });
+                    if (savedReport && savedReport.id) {
+                        savedReportId = savedReport.id;
+                    }
+                } catch (e) {
+                    console.error("Failed to save report to DB:", e);
+                }
             }
 
             // Format category label
@@ -969,7 +990,9 @@ function initApp() {
             inputReportDesc.value = "";
 
             showToast("Report submitted anonymously!");
-            logReportContribution(null);
+            
+            // Log association for the active user profile
+            logReportContribution(savedReportId);
 
             // Auto toggle to Community Feed tab
             toggleReportTabs('feed');
@@ -1381,14 +1404,13 @@ async function loadAchievements() {
                 // 2. Fetch report details
                 const { data: reportsData, error: reportsError } = await supabaseClient
                     .from('reports')
-                    .select('id, category, created_at')
+                    .select('id, category, created_at, status, note')
                     .in('id', reportIds)
                     .order('created_at', { ascending: false });
 
                 if (reportsError) throw reportsError;
 
                 // 3. Render
-                let completedCount = 0;
                 userReportsList.innerHTML = reportsData.map(report => {
                     const dateStr = new Date(report.created_at).toLocaleDateString('en-IN', {
                         day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
@@ -1409,6 +1431,24 @@ async function loadAchievements() {
                         borderClass = 'border-left-high';
                     }
 
+                    // Extract location from note if available
+                    let displayLoc = "Unknown Location";
+                    let displayDesc = "Your submitted report is active.";
+                    if (report.note && report.note.startsWith("Location: ")) {
+                        const splitNote = report.note.split('\n');
+                        displayLoc = splitNote[0].replace('Location: ', '');
+                        if (splitNote.length > 1) {
+                            displayDesc = splitNote.slice(1).join('\n');
+                        }
+                    } else if (report.note) {
+                        displayDesc = report.note;
+                    }
+                    
+                    const actualStatus = report.status || 'pending';
+                    const isCompleted = actualStatus.toLowerCase() === 'completed';
+                    const statusIcon = isCompleted ? 'check-circle' : 'clock';
+                    const statusColor = isCompleted ? 'text-emerald' : 'text-yellow-500';
+
                     return `
                         <div class="card feed-report-card ${borderClass}" style="margin-bottom: 0;">
                             <div class="feed-card-header">
@@ -1416,19 +1456,24 @@ async function loadAchievements() {
                                     <div class="avatar avatar-md avatar-turquoise"><i data-lucide="user"></i></div>
                                     <div>
                                         <div class="reporter-name">You <span class="verification-badge" title="Verified Reporter"><i data-lucide="badge-check"></i></span></div>
-                                        <span class="post-time">${dateStr}</span>
+                                        <span class="post-time">${dateStr} &bull; Near ${displayLoc}</span>
                                     </div>
                                 </div>
-                                <span class="badge ${severityClass} font-semibold">
-                                    <i data-lucide="alert-octagon"></i> ${severityLabel}
-                                </span>
+                                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+                                    <span class="badge ${severityClass} font-semibold">
+                                        <i data-lucide="alert-octagon"></i> ${severityLabel}
+                                    </span>
+                                    <span class="text-3xs font-semibold ${statusColor}" style="display:flex;align-items:center;gap:2px;">
+                                        <i data-lucide="${statusIcon}" style="width:10px;height:10px;"></i> ${actualStatus.charAt(0).toUpperCase() + actualStatus.slice(1)}
+                                    </span>
+                                </div>
                             </div>
                             <div class="feed-card-body">
                                 <div class="category-indicator">
                                     <i data-lucide="${icon}" class="text-coral"></i>
                                     <span class="font-semibold text-xs text-navy">${categoryLabel}</span>
                                 </div>
-                                <p class="feed-report-desc text-xs" style="margin-top: 6px;">Your submitted report is active.</p>
+                                <p class="feed-report-desc text-xs" style="margin-top: 6px;">"${displayDesc}"</p>
                             </div>
                         </div>
                     `;

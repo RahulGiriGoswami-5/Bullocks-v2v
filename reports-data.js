@@ -63,7 +63,8 @@
             lat: offsetCoords.lat,
             lng: offsetCoords.lng,
             category: reportInput.category,
-            note: reportInput.note ? reportInput.note.substring(0, 100) : null
+            note: reportInput.note ? reportInput.note.substring(0, 100) : null,
+            status: 'pending'
         };
 
         const { data, error } = await supabaseClient
