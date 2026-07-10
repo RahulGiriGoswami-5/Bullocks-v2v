@@ -2791,6 +2791,7 @@ textarea:focus-visible {
     background: var(--color-bg-input);
     border-radius: var(--radius-lg);
     border: 1px solid var(--color-border-light);
+    overflow: hidden;
 }
 
 .checkin-contact-info {
@@ -2811,6 +2812,7 @@ textarea:focus-visible {
     display: flex;
     gap: var(--space-xs);
     margin-top: var(--space-xs);
+    flex-wrap: wrap;
 }
 
 .contact-action-btn {
@@ -2827,6 +2829,11 @@ textarea:focus-visible {
     border: none;
     cursor: pointer;
     white-space: nowrap;
+    overflow: hidden;
+    transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+.contact-action-btn:active {
+    transform: scale(0.95);
 }
 
 .contact-action-call {
