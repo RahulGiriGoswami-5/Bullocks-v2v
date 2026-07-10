@@ -128,7 +128,21 @@ function initAuth() {
     // ==========================================
     const protectedHashes = ['#view-home', '#view-checkin', '#view-report', '#view-responders', '#view-profile'];
 
+    // Login / Logout buttons on the landing header
+    const landingLoginBtn = document.getElementById('landing-login-btn');
+    const landingLogoutBtn = document.getElementById('landing-logout-btn');
+
+    async function updateLandingAuthButtons() {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (landingLoginBtn) landingLoginBtn.style.display = session ? 'none' : '';
+        if (landingLogoutBtn) landingLogoutBtn.style.display = session ? '' : 'none';
+    }
+
     async function requireAuth() {
+        // Keep the landing header's Login/Logout buttons in sync with
+        // session state on every navigation, regardless of which view we're on.
+        await updateLandingAuthButtons();
+
         if (!protectedHashes.includes(window.location.hash)) return;
 
         const { data: { session } } = await supabaseClient.auth.getSession();

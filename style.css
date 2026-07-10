@@ -833,6 +833,30 @@ textarea:focus-visible {
     height: 18px;
 }
 
+/* Theme toggle — give it real button chrome so it doesn't look like a
+   bare floating icon (overrides the plain .btn-icon defaults above) */
+.theme-toggle {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+}
+
+.theme-toggle:hover {
+    border-color: var(--color-primary);
+    background: var(--color-bg-input);
+    color: var(--color-primary);
+}
+
+.theme-toggle i,
+.theme-toggle svg {
+    width: 18px;
+    height: 18px;
+}
+
 /* =============================================
    COMPONENTS: Badges & Tags
    ============================================= */
@@ -1264,6 +1288,12 @@ textarea:focus-visible {
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid var(--color-border);
+}
+
+.landing-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
 }
 
 
