@@ -57,9 +57,30 @@
             </nav>
 
             <div class="header-actions">
-                <button id="theme-toggle" class="btn-icon theme-toggle" aria-label="Toggle dark mode">
-                    <span class="theme-icon-light"><i data-lucide="sun"></i></span>
-                    <span class="theme-icon-dark"><i data-lucide="moon"></i></span>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="theme-toggle-svg">
+                        <mask id="header-theme-mask">
+                            <rect x="0" y="0" width="24" height="24" fill="white" />
+                            <circle class="mask-cutout" fill="black" />
+                        </mask>
+                        <circle class="sun-moon-glow" cx="12" cy="12" />
+                        <circle class="sun-moon-center" cx="12" cy="12" mask="url(#header-theme-mask)" />
+                        <g class="sun-rays">
+                            <line x1="12" y1="2" x2="12" y2="4" />
+                            <line x1="12" y1="20" x2="12" y2="22" />
+                            <line x1="2" y1="12" x2="4" y2="12" />
+                            <line x1="20" y1="12" x2="22" y2="12" />
+                            <line x1="4.93" y1="4.93" x2="6.34" y2="6.34" />
+                            <line x1="17.66" y1="17.66" x2="19.07" y2="19.07" />
+                            <line x1="17.66" y1="4.93" x2="16.34" y2="6.34" />
+                            <line x1="4.93" y1="17.66" x2="6.34" y2="19.07" />
+                        </g>
+                        <g class="moon-stars">
+                            <circle class="star star-1" cx="6" cy="6" r="0.7" />
+                            <circle class="star star-2" cx="18" cy="7" r="0.5" />
+                            <circle class="star star-3" cx="17" cy="18" r="0.7" />
+                        </g>
+                    </svg>
                 </button>
                 <label for="nav-menu-toggle" class="btn-icon nav-menu-btn" aria-label="Open menu">
                     <i data-lucide="menu"></i>
@@ -96,9 +117,30 @@
     <div id="spa-container">
         <section id="view-landing" class="view active-view">
             <!-- Theme toggle -->
-            <button class="btn-icon theme-toggle landing-theme-toggle" aria-label="Toggle dark mode">
-                <span class="theme-icon-light"><i data-lucide="sun"></i></span>
-                <span class="theme-icon-dark"><i data-lucide="moon"></i></span>
+            <button class="theme-toggle landing-theme-toggle" aria-label="Toggle dark mode">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="theme-toggle-svg">
+                    <mask id="landing-theme-mask">
+                        <rect x="0" y="0" width="24" height="24" fill="white" />
+                        <circle class="mask-cutout" fill="black" />
+                    </mask>
+                    <circle class="sun-moon-glow" cx="12" cy="12" />
+                    <circle class="sun-moon-center" cx="12" cy="12" mask="url(#landing-theme-mask)" />
+                    <g class="sun-rays">
+                        <line x1="12" y1="2" x2="12" y2="4" />
+                        <line x1="12" y1="20" x2="12" y2="22" />
+                        <line x1="2" y1="12" x2="4" y2="12" />
+                        <line x1="20" y1="12" x2="22" y2="12" />
+                        <line x1="4.93" y1="4.93" x2="6.34" y2="6.34" />
+                        <line x1="17.66" y1="17.66" x2="19.07" y2="19.07" />
+                        <line x1="17.66" y1="4.93" x2="16.34" y2="6.34" />
+                        <line x1="4.93" y1="17.66" x2="6.34" y2="19.07" />
+                    </g>
+                    <g class="moon-stars">
+                        <circle class="star star-1" cx="6" cy="6" r="0.7" />
+                        <circle class="star star-2" cx="18" cy="7" r="0.5" />
+                        <circle class="star star-3" cx="17" cy="18" r="0.7" />
+                    </g>
+                </svg>
             </button>
 
             <div class="landing-page-new">

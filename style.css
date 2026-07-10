@@ -109,6 +109,19 @@ textarea:focus-visible {
     --color-overlay: rgba(30, 58, 95, 0.4);
     --color-shadow: rgba(30, 58, 95, 0.04);
 
+    /* Theme Toggle Redesign Variables (Light Mode) */
+    --theme-toggle-bg: #FFFFFF;
+    --theme-toggle-bg-hover: #FAFAF8;
+    --theme-toggle-border: rgba(243, 108, 79, 0.15);
+    --theme-toggle-border-hover: #F36C4F;
+    --theme-toggle-shadow: 0 4px 12px rgba(243, 108, 79, 0.06), 0 1px 3px rgba(243, 108, 79, 0.04);
+    --theme-toggle-shadow-hover: 0 6px 18px rgba(243, 108, 79, 0.12), 0 2px 6px rgba(243, 108, 79, 0.06);
+    --theme-toggle-icon-color: #F6C453;
+    --theme-toggle-rays-color: #F6C453;
+    --theme-toggle-glow-color: #FFE7DD;
+    --theme-toggle-glow-opacity: 0.65;
+    --theme-toggle-stars-color: #FAFAF8;
+
     /* Typography */
     --font-title: 'Plus Jakarta Sans', 'Inter', sans-serif;
     --font-body: 'Inter', sans-serif;
@@ -199,6 +212,19 @@ textarea:focus-visible {
 
     --color-overlay: rgba(4, 8, 16, 0.75);
     --color-shadow: rgba(0, 0, 0, 0.4);
+
+    /* Theme Toggle Redesign Variables (Dark Mode) */
+    --theme-toggle-bg: #132A4A;
+    --theme-toggle-bg-hover: #23395D;
+    --theme-toggle-border: rgba(175, 200, 255, 0.15);
+    --theme-toggle-border-hover: #AFC8FF;
+    --theme-toggle-shadow: 0 4px 14px rgba(10, 20, 40, 0.4), 0 1px 3px rgba(10, 20, 40, 0.2);
+    --theme-toggle-shadow-hover: 0 6px 20px rgba(10, 20, 40, 0.6), 0 2px 6px rgba(10, 20, 40, 0.3);
+    --theme-toggle-icon-color: #AFC8FF;
+    --theme-toggle-rays-color: rgba(246, 196, 83, 0);
+    --theme-toggle-glow-color: #4A5E8A;
+    --theme-toggle-glow-opacity: 0.4;
+    --theme-toggle-stars-color: #AFC8FF;
 }
 
 /* --- Layout Structure --- */
@@ -833,28 +859,163 @@ textarea:focus-visible {
     height: 18px;
 }
 
-/* Theme toggle — give it real button chrome so it doesn't look like a
-   bare floating icon (overrides the plain .btn-icon defaults above) */
+/* Theme toggle — redesign for a premium, modern, and unique theme selector */
 .theme-toggle {
-    width: 40px;
-    height: 40px;
+    position: relative;
+    width: 42px;
+    height: 42px;
     flex-shrink: 0;
-    border: 1.5px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background: var(--color-bg-secondary);
-    color: var(--color-text-secondary);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--theme-toggle-border);
+    background: var(--theme-toggle-bg);
+    box-shadow: var(--theme-toggle-shadow);
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+    transition: background 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+/* Premium hover effect: slight lift (translateY), shadow increase, subtle scale (1.05) */
 .theme-toggle:hover {
-    border-color: var(--color-primary);
-    background: var(--color-bg-input);
-    color: var(--color-primary);
+    transform: translateY(-2px) scale(1.05);
+    border-color: var(--theme-toggle-border-hover);
+    box-shadow: var(--theme-toggle-shadow-hover);
+    background: var(--theme-toggle-bg-hover);
 }
 
-.theme-toggle i,
-.theme-toggle svg {
-    width: 18px;
-    height: 18px;
+/* Satisfying click animation with a gentle bounce */
+.theme-toggle:active {
+    transform: translateY(0) scale(0.92);
+    transition: transform 0.1s ease;
+}
+
+/* Accessibility focus state matching the brand theme */
+.theme-toggle:focus-visible {
+    outline: 2px solid var(--theme-toggle-border-hover);
+    outline-offset: 3px;
+}
+
+/* Custom SVG Layout & Animations */
+.theme-toggle-svg {
+    width: 22px;
+    height: 22px;
+    overflow: visible;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Rotate the entire SVG slightly during toggle */
+[data-theme="dark"] .theme-toggle-svg {
+    transform: rotate(40deg);
+}
+
+/* Mask Cutout for crescent moon shape */
+.mask-cutout {
+    cx: 24px;
+    cy: 4px;
+    r: 6px;
+    transition: cx 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
+                cy 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
+                r 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] .mask-cutout {
+    cx: 17px;
+    cy: 7px;
+    r: 5.5px;
+}
+
+/* Center body of Sun / Moon */
+.sun-moon-center {
+    r: 5.5px;
+    fill: var(--theme-toggle-icon-color);
+    transition: fill 0.35s ease, r 0.35s ease;
+}
+
+/* Glow halo around center */
+.sun-moon-glow {
+    r: 8px;
+    fill: var(--theme-toggle-glow-color);
+    opacity: var(--theme-toggle-glow-opacity);
+    filter: blur(2px);
+    transition: fill 0.35s ease, opacity 0.35s ease, r 0.35s ease;
+}
+
+/* Sun rays styling */
+.sun-rays {
+    stroke: var(--theme-toggle-rays-color);
+    stroke-width: 2px;
+    stroke-linecap: round;
+    opacity: 1;
+    transform-origin: center;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                opacity 0.35s ease, 
+                stroke 0.35s ease;
+}
+
+[data-theme="dark"] .sun-rays {
+    opacity: 0;
+    transform: scale(0.3) rotate(45deg);
+}
+
+/* Rays gentle animation in light mode */
+@keyframes rayGlow {
+    0%, 100% { opacity: 0.8; stroke-width: 2px; }
+    50% { opacity: 1; stroke-width: 2.3px; }
+}
+
+/* Only run rays animation when theme is light */
+html[data-theme="light"] .sun-rays line,
+html:not([data-theme="dark"]) .sun-rays line {
+    animation: rayGlow 3s infinite ease-in-out;
+}
+/* Stagger the ray glow animation to make it look organic */
+html[data-theme="light"] .sun-rays line:nth-child(2n),
+html:not([data-theme="dark"]) .sun-rays line:nth-child(2n) {
+    animation-delay: 0.75s;
+}
+html[data-theme="light"] .sun-rays line:nth-child(3n),
+html:not([data-theme="dark"]) .sun-rays line:nth-child(3n) {
+    animation-delay: 1.5s;
+}
+
+/* Moon stars styling */
+.moon-stars {
+    fill: var(--theme-toggle-stars-color);
+    opacity: 0;
+    transform: scale(0.5);
+    transform-origin: center;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+}
+
+[data-theme="dark"] .moon-stars {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Stars twinkle animation in dark mode */
+@keyframes starTwinkle {
+    0%, 100% { opacity: 0.4; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+.star {
+    transform-origin: center;
+}
+
+[data-theme="dark"] .star-1 {
+    animation: starTwinkle 2s infinite ease-in-out;
+}
+[data-theme="dark"] .star-2 {
+    animation: starTwinkle 2.5s infinite ease-in-out 0.5s;
+}
+[data-theme="dark"] .star-3 {
+    animation: starTwinkle 3s infinite ease-in-out 1s;
 }
 
 /* =============================================
@@ -2185,9 +2346,6 @@ textarea:focus-visible {
     top: var(--space-base);
     right: var(--space-base);
     z-index: 10;
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-sm);
 }
 
 
