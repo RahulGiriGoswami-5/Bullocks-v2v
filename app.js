@@ -214,6 +214,66 @@ function initApp() {
         modalGuestBtn.addEventListener('click', enterGuestMode);
     }
 
+    // ==========================================
+    // EMERGENCY MEGA BUTTON + QUICK ACTION SHEET
+    // ==========================================
+    const emergencyMegaBtn = document.getElementById('emergency-mega-btn');
+    const emergencySheetOverlay = document.getElementById('emergency-sheet-overlay');
+    const closeEmergencySheetBtn = document.getElementById('close-emergency-sheet');
+    const alertContactsBtn = document.getElementById('alert-contacts-btn');
+    const decoyModeBtn = document.getElementById('decoy-mode-btn');
+    const exploreLinkBtn = document.getElementById('explore-link-btn');
+    const exploreSection = document.getElementById('explore-section');
+
+    function openEmergencySheet() {
+        if (emergencySheetOverlay) emergencySheetOverlay.classList.add('active');
+    }
+    function closeEmergencySheet() {
+        if (emergencySheetOverlay) emergencySheetOverlay.classList.remove('active');
+    }
+
+    if (emergencyMegaBtn) {
+        emergencyMegaBtn.addEventListener('click', openEmergencySheet);
+    }
+    if (closeEmergencySheetBtn) {
+        closeEmergencySheetBtn.addEventListener('click', closeEmergencySheet);
+    }
+    if (emergencySheetOverlay) {
+        emergencySheetOverlay.addEventListener('click', (e) => {
+            if (e.target === emergencySheetOverlay) closeEmergencySheet();
+        });
+    }
+    if (alertContactsBtn) {
+        alertContactsBtn.addEventListener('click', () => {
+            closeEmergencySheet();
+            triggerSOS();
+        });
+    }
+    if (decoyModeBtn) {
+        decoyModeBtn.addEventListener('click', () => {
+            closeEmergencySheet();
+            enterGuestMode();
+        });
+    }
+    if (exploreLinkBtn && exploreSection) {
+        exploreLinkBtn.addEventListener('click', () => {
+            exploreSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+
+    // Explore cards should feel instant — enable guest mode quietly on click
+    document.querySelectorAll('.explore-card').forEach((card) => {
+        card.addEventListener('click', () => {
+            try {
+                if (!localStorage.getItem('sahayika-guest')) {
+                    localStorage.setItem('sahayika-guest', 'true');
+                }
+            } catch (e) {
+                console.warn('localStorage unavailable:', e);
+            }
+        });
+    });
+
     // Smooth scroll CTA
     const scrollBtn = document.querySelector('.scroll-to-info');
     if (scrollBtn) {

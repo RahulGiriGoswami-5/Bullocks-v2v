@@ -108,126 +108,138 @@
                     <button class="btn btn-sm btn-outline open-auth-btn" data-target="login">Login</button>
                 </header>
 
-                <!-- Hero Section -->
-                <div class="hero-split">
-                    <!-- Left Column -->
-                    <div class="hero-left">
-                        <h1 class="hero-title">Women's Safety & <br><span class="highlight-text">Community
-                                Protection</span></h1>
-                        <p class="hero-desc">Your premium everyday safety companion. Navigate secure routes with live
-                            heatmap
-                            routing, alert verified volunteers instantly, and access hidden emergency SOS features.
-                            Designed with
-                            elegance, engineered for security.</p>
-
-                        <div class="hero-ctas">
-                            <button class="btn btn-primary open-auth-btn" data-target="signup">Get Started</button>
-                            <button class="btn btn-outline scroll-to-info">Learn More</button>
-                        </div>
-
-                        <button class="btn-emergency-access" id="guest-emergency-btn">
-                            <i data-lucide="shield-alert"></i>
-                            <span>
-                                <strong>In danger right now?</strong>
-                                Skip login — Emergency Access
-                            </span>
-                            <i data-lucide="arrow-right"></i>
-                        </button>
-
-                        <!-- Trust Indicators -->
-                        <div class="trust-stats">
-                            <div class="stat-item">
-                                <span class="stat-num">10,000+</span>
-                                <span class="stat-lbl">Women Protected</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-num">2,500+</span>
-                                <span class="stat-lbl">Community Reports</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-num">500+</span>
-                                <span class="stat-lbl">Verified Volunteers</span>
-                            </div>
-                        </div>
+                <!-- Emergency-First Hero -->
+                <div class="emergency-hero">
+                    <div class="emergency-hero-badge">
+                        <span class="status-dot"></span> System Active — help is one tap away
                     </div>
 
-                    <!-- Right Column (Mockup) -->
-                    <div class="hero-right">
-                        <div class="mockup-container">
-                            <!-- Animated background blur shape -->
-                            <div class="glow-bg"></div>
+                    <h1 class="hero-title">In danger? <br><span class="highlight-text">Tap below. Right now.</span>
+                    </h1>
+                    <p class="hero-desc">No login. No forms. No waiting. One tap connects you to real help.</p>
 
-                            <!-- Smartphone Mockup -->
-                            <div class="device-mockup">
-                                <div class="device-notch"></div>
-                                <div class="device-screen">
-                                    <!-- Custom Simulated UI -->
-                                    <div class="sim-header">
-                                        <span class="sim-time">9:41</span>
-                                        <div class="sim-status-icons">
-                                            <i data-lucide="signal" class="sim-icon"></i>
-                                            <i data-lucide="wifi" class="sim-icon"></i>
-                                            <i data-lucide="battery" class="sim-icon"></i>
-                                        </div>
-                                    </div>
-                                    <div class="sim-app-bar">
-                                        <span class="sim-app-title">Sahayika</span>
-                                        <div class="sim-avatar">PD</div>
-                                    </div>
-                                    <div class="sim-body">
-                                        <div class="sim-safety-card">
-                                            <div class="flex items-center justify-between w-full">
-                                                <span class="text-2xs text-muted">Current Location Safety</span>
-                                                <span class="sim-badge badge-success">94% Safe</span>
-                                            </div>
-                                            <div class="sim-progress-bar">
-                                                <div class="sim-progress-fill" style="width: 94%;"></div>
-                                            </div>
-                                        </div>
+                    <button class="emergency-mega-btn" id="emergency-mega-btn">
+                        <span class="emergency-mega-pulse"></span>
+                        <i data-lucide="shield-alert"></i>
+                        <span>EMERGENCY</span>
+                    </button>
 
-                                        <div class="sim-sos-button">
-                                            <span class="pulse-ring"></span>
-                                            <span class="sos-text">SOS</span>
-                                        </div>
+                    <p class="emergency-hero-subnote">
+                        Want the full experience?
+                        <button type="button" class="link-btn open-auth-btn" data-target="signup">Create a free
+                            account</button>
+                    </p>
 
-                                        <div class="sim-route-card">
-                                            <div class="flex items-center gap-sm">
-                                                <i data-lucide="navigation" class="sim-nav-icon"></i>
-                                                <div>
-                                                    <div class="font-semibold text-2xs">Optimal Path Verified</div>
-                                                    <div class="text-3xs text-muted">2.4 km • Live Patrol active</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <button class="explore-link-btn" id="explore-link-btn">
+                        Explore Sahayika's safety tools
+                        <i data-lucide="chevron-down"></i>
+                    </button>
 
-                            <!-- Floating Safety Cards -->
-                            <div class="floating-card float-1">
-                                <div class="float-icon float-icon-green"><i data-lucide="shield-check"></i></div>
-                                <div>
-                                    <div class="font-semibold text-2xs">Safe Haven Verified</div>
-                                    <div class="text-3xs text-muted">Metro Station Cafe</div>
-                                </div>
-                            </div>
-                            <div class="floating-card float-2">
-                                <div class="float-icon float-icon-coral"><i data-lucide="users"></i></div>
-                                <div>
-                                    <div class="font-semibold text-2xs">Responders Near You</div>
-                                    <div class="text-3xs text-muted">12 Verified active volunteers</div>
-                                </div>
-                            </div>
-                            <div class="floating-card float-3">
-                                <div class="float-icon float-icon-navy"><i data-lucide="bell"></i></div>
-                                <div>
-                                    <div class="font-semibold text-2xs">Live Alert</div>
-                                    <div class="text-3xs text-muted">Sector B light issues fixed</div>
-                                </div>
-                            </div>
+                    <!-- Trust Indicators -->
+                    <div class="trust-stats">
+                        <div class="stat-item">
+                            <span class="stat-num">10,000+</span>
+                            <span class="stat-lbl">Women Protected</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-num">2,500+</span>
+                            <span class="stat-lbl">Community Reports</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-num">500+</span>
+                            <span class="stat-lbl">Verified Volunteers</span>
                         </div>
                     </div>
                 </div>
+
+                <!-- Emergency Quick Action Sheet -->
+                <div class="emergency-sheet-overlay" id="emergency-sheet-overlay">
+                    <div class="emergency-sheet">
+                        <div class="emergency-sheet-header">
+                            <h3>Choose emergency action</h3>
+                            <button class="btn-icon" id="close-emergency-sheet" aria-label="Close"><i
+                                    data-lucide="x"></i></button>
+                        </div>
+
+                        <a href="tel:112" class="emergency-action-btn action-red">
+                            <i data-lucide="phone-call"></i>
+                            <div>
+                                <strong>Call 112</strong>
+                                <span>All Emergency Services (India)</span>
+                            </div>
+                        </a>
+                        <a href="tel:102" class="emergency-action-btn action-red">
+                            <i data-lucide="siren"></i>
+                            <div>
+                                <strong>Call Ambulance</strong>
+                                <span>102 — Medical Emergency</span>
+                            </div>
+                        </a>
+                        <a href="tel:100" class="emergency-action-btn action-red">
+                            <i data-lucide="shield"></i>
+                            <div>
+                                <strong>Call Police</strong>
+                                <span>100 — Police Control Room</span>
+                            </div>
+                        </a>
+                        <button type="button" class="emergency-action-btn action-navy" id="alert-contacts-btn">
+                            <i data-lucide="users"></i>
+                            <div>
+                                <strong>Alert My Trusted Contacts</strong>
+                                <span>Silently share live location</span>
+                            </div>
+                        </button>
+                        <button type="button" class="emergency-action-btn action-outline" id="decoy-mode-btn">
+                            <i data-lucide="calculator"></i>
+                            <div>
+                                <strong>Open Silent Decoy Mode</strong>
+                                <span>Disguise the app as a calculator</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Explore Section -->
+                <section class="explore-section" id="explore-section">
+                    <div class="section-heading" style="flex-direction:column; text-align:center; gap:4px;">
+                        <h2 class="section-title">Explore Sahayika</h2>
+                        <p class="hero-desc" style="max-width:480px;">Everything built to keep you safe — before,
+                            during, and after.</p>
+                    </div>
+
+                    <div class="explore-grid">
+                        <a href="#view-home" class="explore-card">
+                            <div class="explore-icon"><i data-lucide="map"></i></div>
+                            <h3>Live Safety Heatmap</h3>
+                            <p>Real-time safety scores for streets and areas near you.</p>
+                        </a>
+                        <a href="#view-checkin" class="explore-card">
+                            <div class="explore-icon"><i data-lucide="clock"></i></div>
+                            <h3>Safe Check-In</h3>
+                            <p>Set an ETA — contacts are alerted automatically if you miss it.</p>
+                        </a>
+                        <a href="#view-report" class="explore-card">
+                            <div class="explore-icon"><i data-lucide="file-text"></i></div>
+                            <h3>Community Reports</h3>
+                            <p>Anonymously report incidents and keep the map accurate.</p>
+                        </a>
+                        <a href="#view-responders" class="explore-card">
+                            <div class="explore-icon"><i data-lucide="users"></i></div>
+                            <h3>Verified Responders</h3>
+                            <p>Real, nearby volunteers ready to help when it matters.</p>
+                        </a>
+                        <a href="#view-sos" class="explore-card">
+                            <div class="explore-icon"><i data-lucide="calculator"></i></div>
+                            <h3>Decoy Tools</h3>
+                            <p>A working calculator that secretly triggers SOS.</p>
+                        </a>
+                        <a href="#view-profile" class="explore-card">
+                            <div class="explore-icon"><i data-lucide="user"></i></div>
+                            <h3>Your Safety Profile</h3>
+                            <p>Manage trusted contacts and account settings.</p>
+                        </a>
+                    </div>
+                </section>
 
                 <!-- Auth Modal -->
                 <div id="auth-modal" class="modal-overlay">
