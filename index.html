@@ -934,6 +934,10 @@
                         radius.</p>
                 </div>
 
+                <button class="btn btn-primary" style="margin-bottom:20px" id="open-responder-signup-btn">
+                    <i data-lucide="user-plus"></i> Become a Responder
+                </button>
+
                 <!-- Filter Chips -->
                 <div class="filter-chips responder-filters" style="margin-bottom: 24px;">
                     <button class="filter-chip active" data-filter="all">All Guards</button>
@@ -1086,6 +1090,58 @@
                 </div>
             </div>
         </section>
+
+        <!-- Become-a-Responder Modal -->
+        <div id="responder-modal" class="modal-overlay">
+            <div class="modal-card">
+                <button class="modal-close" id="responder-modal-close" aria-label="Close modal"><i
+                        data-lucide="x"></i></button>
+                <div class="modal-brand">
+                    <div class="logo-mark"><i data-lucide="shield-plus"></i></div>
+                    <h2 class="modal-title">Become a Responder</h2>
+                    <p class="modal-subtitle">Join Sahayika's verified responder network</p>
+                </div>
+
+                <form class="auth-form" id="form-responder" action="#" onsubmit="return false;">
+                    <div class="form-group">
+                        <label class="form-label" for="r-name">Full Name</label>
+                        <div class="input-icon-wrapper">
+                            <i data-lucide="user" class="input-icon"></i>
+                            <input type="text" id="r-name" class="form-input" placeholder="Your full name" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="r-phone">Phone Number</label>
+                        <div class="input-icon-wrapper">
+                            <i data-lucide="phone" class="input-icon"></i>
+                            <input type="tel" id="r-phone" class="form-input" placeholder="+91 98765 43210" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="r-category">Responder Type</label>
+                        <div class="input-icon-wrapper">
+                            <i data-lucide="shield" class="input-icon"></i>
+                            <select id="r-category" class="form-input" required>
+                                <option value="volunteer">Community Volunteer</option>
+                                <option value="medical">Medical</option>
+                                <option value="police">Police</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="r-area">Locality / Area</label>
+                        <div class="input-icon-wrapper">
+                            <i data-lucide="map-pin" class="input-icon"></i>
+                            <input type="text" id="r-area" class="form-input" placeholder="e.g. Sadar Bazaar, Agra"
+                                required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" id="r-submit-btn">Submit
+                        Application</button>
+                    <p class="form-error" id="r-msg" style="display:none;"></p>
+                </form>
+            </div>
+        </div>
 
         <!-- Chat Modal UI (Added to facilitate the messaging mockup) -->
         <div id="chat-modal" class="modal-overlay">
@@ -1356,6 +1412,7 @@
     <script src="supabase-client.js"></script>
     <script src="auth.js"></script>
     <script src="reports-data.js"></script>
+    <script src="responder-signup.js"></script>
     <script src="app.js"></script>
 </body>
 
