@@ -4235,3 +4235,83 @@ html[data-theme="light"] .device-mockup {
 .form-error.form-success {
     color: var(--color-success);
 }
+
+/* ==========================================
+   LIVE SAFETY HEATMAP — report popup
+   ========================================== */
+.custom-leaflet-popup .leaflet-popup-content-wrapper {
+    border-radius: var(--radius-lg);
+    padding: 0;
+}
+
+.custom-leaflet-popup .leaflet-popup-content {
+    margin: 0;
+    width: auto !important;
+}
+
+.report-popup-form {
+    padding: var(--space-sm) var(--space-xs);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: var(--font-body, inherit);
+}
+
+.report-popup-form h4 {
+    font-family: var(--font-title);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.report-popup-desc {
+    font-size: var(--font-size-3xs);
+    color: var(--color-text-muted);
+    margin: 0 0 4px;
+    line-height: 1.4;
+}
+
+.report-category-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.report-cat-btn {
+    text-align: left;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-2xs);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.report-cat-btn:hover {
+    background: var(--color-bg-card);
+}
+
+.report-cat-btn.active {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+    font-weight: var(--font-weight-semibold);
+}
+
+.report-note-input {
+    width: 100%;
+    resize: none;
+    min-height: 56px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-2xs);
+    padding: 8px;
+    font-family: inherit;
+}
+
+.report-submit-btn {
+    margin-top: 2px;
+}

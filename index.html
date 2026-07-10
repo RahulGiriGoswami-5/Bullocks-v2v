@@ -330,14 +330,14 @@
                     </div>
                 </section>
 
-                <!-- Route & Map Section -->
+                <!-- Live Safety Heatmap -->
                 <section class="section">
                     <div class="section-heading">
                         <div class="heading-title-wrapper">
-                            <h2 class="section-title">Verified Safe Routes</h2>
-                            <p class="section-subtitle">Real-time OpenStreetMap with active local responders</p>
+                            <h2 class="section-title">Live Safety Heatmap</h2>
+                            <p class="section-subtitle">Tap the map to anonymously report a safety concern nearby</p>
                         </div>
-                        <span class="badge badge-success"><span class="pulse-dot"></span> Live GPS</span>
+                        <span class="badge badge-success"><span class="pulse-dot"></span> Live</span>
                     </div>
 
                     <!-- Leaflet Map Container -->
@@ -345,20 +345,24 @@
 
                     <div class="heatmap-legend">
                         <div class="heatmap-legend-item">
-                            <div class="heatmap-swatch bg-emerald"></div>
-                            <span>Safe path</span>
+                            <div class="heatmap-swatch" style="background:#F59E0B;"></div>
+                            <span>Poor lighting</span>
                         </div>
                         <div class="heatmap-legend-item">
-                            <div class="heatmap-swatch bg-coral"></div>
-                            <span>Caution area</span>
+                            <div class="heatmap-swatch" style="background:#DC2626;"></div>
+                            <span>Harassment</span>
                         </div>
                         <div class="heatmap-legend-item">
-                            <div class="heatmap-swatch bg-navy"></div>
-                            <span>Police patrol</span>
+                            <div class="heatmap-swatch" style="background:#7C3AED;"></div>
+                            <span>Isolated</span>
                         </div>
                         <div class="heatmap-legend-item">
-                            <div class="heatmap-swatch bg-success-light"></div>
-                            <span>Verified Safe spots</span>
+                            <div class="heatmap-swatch" style="background:#2563EB;"></div>
+                            <span>Unsafe transit</span>
+                        </div>
+                        <div class="heatmap-legend-item">
+                            <div class="heatmap-swatch" style="background:#6B7280;"></div>
+                            <span>Other</span>
                         </div>
                     </div>
                 </section>
@@ -1332,6 +1336,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="supabase-client.js"></script>
     <script src="auth.js"></script>
+    <script src="reports-data.js"></script>
     <script src="app.js"></script>
 </body>
 

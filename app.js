@@ -272,9 +272,19 @@ function initApp() {
 
 
     // ==========================================
-    // LEAFLET MAP INITIALIZATION
+    // LEAFLET MAP — LIVE SAFETY HEATMAP
     // ==========================================
     let mapInstance = null;
+    let reportsLayer = null;
+    let activeReportPopup = null;
+
+    const categoryColors = {
+        'Poor lighting': '#F59E0B',
+        'Harassment': '#DC2626',
+        'Isolated / no people around': '#7C3AED',
+        'Unsafe transit stop': '#2563EB',
+        'Other': '#6B7280'
+    };
 
     function initLeafletMap() {
         const mapContainer = document.getElementById('map');
@@ -295,85 +305,127 @@ function initApp() {
             scrollWheelZoom: false
         }).setView([12.9716, 77.5946], 14);
 
-        // Load tiles (will be styled via sepia/grayscale filters in style.css)
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(mapInstance);
 
-        // Zoom controller
         L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
 
-        // Define custom marker styling via Leaflet divIcon
-        const createMarkerIcon = (colorClass) => {
-            return L.divIcon({
-                className: 'custom-map-pin',
-                html: `<div class="pin-ring ${colorClass}"></div>`,
-                iconSize: [24, 24],
-                iconAnchor: [12, 12]
+        mapInstance.on('click', handleMapReportClick);
+
+        renderReportPins();
+    }
+
+    async function renderReportPins() {
+        if (!mapInstance || !window.SahayikaReports) return;
+
+        const reports = await window.SahayikaReports.getReports();
+
+        if (reportsLayer) {
+            mapInstance.removeLayer(reportsLayer);
+        }
+        reportsLayer = L.layerGroup();
+
+        reports.forEach((r) => {
+            const color = categoryColors[r.category] || categoryColors['Other'];
+            const marker = L.circleMarker([r.lat, r.lng], {
+                radius: 8,
+                color: '#FFFFFF',
+                weight: 2,
+                fillColor: color,
+                fillOpacity: 0.9
             });
-        };
-
-        // Safe Places
-        const safeSpots = [
-            { name: "Verified Safe Spot: CCD Richmond", coords: [12.9726, 77.5936] },
-            { name: "Verified Safe Spot: Public Library", coords: [12.9756, 77.5986] }
-        ];
-        safeSpots.forEach(s => {
-            L.marker(s.coords, { icon: createMarkerIcon('bg-emerald') })
-                .addTo(mapInstance)
-                .bindPopup(`<b>${s.name}</b><br><span class="badge badge-success">Vouched Area</span>`);
+            marker.bindTooltip(r.category, { direction: 'top', offset: [0, -8] });
+            reportsLayer.addLayer(marker);
         });
 
-        // Services
-        const services = [
-            { name: "Police Patrol Station", coords: [12.9696, 77.5906], icon: 'bg-navy' },
-            { name: "St. Martha Hospital", coords: [12.9786, 77.5956], icon: 'bg-coral' }
-        ];
-        services.forEach(s => {
-            L.marker(s.coords, { icon: createMarkerIcon(s.icon) })
-                .addTo(mapInstance)
-                .bindPopup(`<b>${s.name}</b><br><span class="text-xs text-muted">Active response team</span>`);
+        reportsLayer.addTo(mapInstance);
+    }
+
+    function handleMapReportClick(e) {
+        if (activeReportPopup) {
+            mapInstance.closePopup(activeReportPopup);
+            activeReportPopup = null;
+        }
+
+        const { lat, lng } = e.latlng;
+        let selectedCategory = '';
+
+        const popup = L.popup({
+            closeButton: true,
+            closeOnClick: false,
+            autoClose: false,
+            className: 'custom-leaflet-popup',
+            maxWidth: 240,
+            minWidth: 210
+        }).setLatLng(e.latlng);
+
+        const container = document.createElement('div');
+        container.className = 'report-popup-form';
+        container.innerHTML = `
+            <h4>Report a safety concern</h4>
+            <p class="report-popup-desc">Anonymous — location is shifted ~50-100m for privacy.</p>
+            <div class="report-category-grid">
+                <button type="button" class="report-cat-btn" data-category="Poor lighting">💡 Poor lighting</button>
+                <button type="button" class="report-cat-btn" data-category="Harassment">⚠️ Harassment</button>
+                <button type="button" class="report-cat-btn" data-category="Isolated / no people around">👥 Isolated</button>
+                <button type="button" class="report-cat-btn" data-category="Unsafe transit stop">🚌 Transit stop</button>
+                <button type="button" class="report-cat-btn" data-category="Other">✏️ Other</button>
+            </div>
+            <textarea class="report-note-input" id="report-note-input" maxlength="100" placeholder="Optional note (max 100 chars)" style="display:none;"></textarea>
+            <button type="button" class="btn btn-primary btn-block report-submit-btn" id="report-submit-btn" disabled>Submit Report</button>
+        `;
+
+        const catButtons = container.querySelectorAll('.report-cat-btn');
+        const noteInput = container.querySelector('#report-note-input');
+        const submitBtn = container.querySelector('#report-submit-btn');
+
+        catButtons.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                catButtons.forEach((b) => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedCategory = btn.getAttribute('data-category');
+                submitBtn.disabled = false;
+                noteInput.style.display = selectedCategory === 'Other' ? 'block' : 'none';
+            });
         });
 
-        // Unsafe Area (Red Circle)
-        L.circle([12.9656, 77.5926], {
-            color: '#E76F51',
-            fillColor: '#E76F51',
-            fillOpacity: 0.15,
-            radius: 180,
-            weight: 1
-        }).addTo(mapInstance).bindPopup(`<b>Poor Lighting Alert</b><br><span class="text-coral">Avoid paths near park layout after 8 PM.</span>`);
+        submitBtn.addEventListener('click', async () => {
+            if (!selectedCategory || submitBtn.disabled) return;
 
-        // Safe Route (Green Polyline)
-        const safeRouteCoords = [
-            [12.9716, 77.5946],
-            [12.9726, 77.5936],
-            [12.9756, 77.5986],
-            [12.9786, 77.5956]
-        ];
-        const safeRoute = L.polyline(safeRouteCoords, {
-            color: '#22C55E',
-            weight: 6,
-            opacity: 0.85,
-            lineCap: 'round'
-        }).addTo(mapInstance);
+            if (window.SahayikaReports) {
+                const rateCheck = window.SahayikaReports.checkRateLimit();
+                if (!rateCheck.allowed) {
+                    const waitMins = Math.ceil((rateCheck.resetTime - Date.now()) / 60000);
+                    showToast(`Rate limit reached. Try again in ${waitMins} min(s).`);
+                    mapInstance.closePopup(popup);
+                    return;
+                }
+            }
 
-        // Alternate route (Yellow Dash Polyline)
-        const altRouteCoords = [
-            [12.9716, 77.5946],
-            [12.9696, 77.5906],
-            [12.9656, 77.5926],
-            [12.9646, 77.5966]
-        ];
-        L.polyline(altRouteCoords, {
-            color: '#F59E0B',
-            weight: 4,
-            opacity: 0.65,
-            dashArray: '5, 10'
-        }).addTo(mapInstance);
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting…';
 
-        mapInstance.fitBounds(safeRoute.getBounds(), { padding: [40, 40] });
+            const note = noteInput.value.trim() || null;
+            const result = window.SahayikaReports
+                ? await window.SahayikaReports.addReport({ lat, lng, category: selectedCategory, note })
+                : null;
+
+            if (result) {
+                showToast('Safety concern reported anonymously.');
+                mapInstance.closePopup(popup);
+                await renderReportPins();
+            } else {
+                showToast('Could not save report. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Report';
+            }
+        });
+
+        popup.setContent(container);
+        popup.openOn(mapInstance);
+        activeReportPopup = popup;
     }
 
 
