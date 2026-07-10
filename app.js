@@ -259,18 +259,8 @@ function initApp() {
         });
     }
 
-    // Explore cards should feel instant — enable guest mode quietly on click
-    document.querySelectorAll('.explore-card').forEach((card) => {
-        card.addEventListener('click', () => {
-            try {
-                if (!localStorage.getItem('sahayika-guest')) {
-                    localStorage.setItem('sahayika-guest', 'true');
-                }
-            } catch (e) {
-                console.warn('localStorage unavailable:', e);
-            }
-        });
-    });
+    // NOTE: explore-card clicks are now gated by auth.js — they no longer
+    // silently grant guest mode here.
 
     // Smooth scroll CTA
     const scrollBtn = document.querySelector('.scroll-to-info');

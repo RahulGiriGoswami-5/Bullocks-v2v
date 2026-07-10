@@ -69,8 +69,7 @@ function initAuth() {
             }
 
             if (authModal) authModal.classList.remove('active');
-            window.location.hash = '#view-home';
-            await loadGreeting();
+            goAfterAuth();
         });
     }
 
@@ -96,8 +95,7 @@ function initAuth() {
             }
 
             if (authModal) authModal.classList.remove('active');
-            window.location.hash = '#view-home';
-            await loadGreeting();
+            goAfterAuth();
         });
     }
 
@@ -126,10 +124,12 @@ function initAuth() {
     }
 
     // ==========================================
-    // ROUTE GUARD — #view-home requires a session or guest mode
+    // ROUTE GUARD — app views require a session or guest mode
     // ==========================================
+    const protectedHashes = ['#view-home', '#view-checkin', '#view-report', '#view-responders', '#view-profile'];
+
     async function requireAuth() {
-        if (window.location.hash !== '#view-home') return;
+        if (!protectedHashes.includes(window.location.hash)) return;
 
         const { data: { session } } = await supabaseClient.auth.getSession();
         let isGuest = false;
@@ -152,6 +152,61 @@ function initAuth() {
 
     window.addEventListener('hashchange', requireAuth);
     requireAuth();
+
+    // ==========================================
+    // TOOL GATING — Safety-tools list requires login before opening
+    // ==========================================
+    const pendingNavKey = 'sahayika-pending-nav';
+
+    function switchToLoginTab() {
+        const tabLogin = document.getElementById('tab-login');
+        const tabSignup = document.getElementById('tab-signup');
+        if (tabLogin && tabSignup && formLogin && formSignup) {
+            tabSignup.classList.remove('active');
+            tabLogin.classList.add('active');
+            formSignup.style.display = 'none';
+            formLogin.style.display = 'flex';
+        }
+    }
+
+    function goAfterAuth() {
+        let pending = null;
+        try {
+            pending = sessionStorage.getItem(pendingNavKey);
+            if (pending) sessionStorage.removeItem(pendingNavKey);
+        } catch (e) {
+            console.warn('sessionStorage unavailable:', e);
+        }
+        window.location.hash = pending || '#view-home';
+    }
+
+    document.querySelectorAll('.explore-card').forEach((card) => {
+        card.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const targetHash = card.getAttribute('href');
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            let isGuest = false;
+            try {
+                isGuest = !!localStorage.getItem('sahayika-guest');
+            } catch (err) {
+                console.warn('localStorage unavailable:', err);
+            }
+
+            if (session || isGuest) {
+                window.location.hash = targetHash;
+                return;
+            }
+
+            try {
+                sessionStorage.setItem(pendingNavKey, targetHash);
+            } catch (err) {
+                console.warn('sessionStorage unavailable:', err);
+            }
+            if (authModal) authModal.classList.add('active');
+            switchToLoginTab();
+        });
+    });
 
     // ==========================================
     // LOGOUT
