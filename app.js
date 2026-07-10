@@ -112,6 +112,12 @@ function initApp() {
         if (hash === '#view-home') {
             setTimeout(initLeafletMap, 50);
         }
+
+        if (hash === '#view-profile') {
+            if (typeof loadProfileTrustedContacts === 'function') {
+                loadProfileTrustedContacts();
+            }
+        }
     }
 
     window.addEventListener('hashchange', () => {
@@ -1246,6 +1252,85 @@ function initApp() {
         `;
     });
 
+}
+
+async function loadProfileTrustedContacts() {
+
+    const container = document.getElementById("profileTrustedContacts");
+    const countBadge = document.getElementById("profileContactCount");
+
+    if (!container) return;
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        container.innerHTML = `
+            <p class="text-muted">Login to view trusted contacts.</p>
+        `;
+        if (countBadge) countBadge.textContent = "0 added";
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from("trusted_contacts")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: true });
+
+    if (error) {
+        console.error(error);
+        container.innerHTML = `
+            <p class="text-muted">Unable to load contacts.</p>
+        `;
+        if (countBadge) countBadge.textContent = "0 added";
+        return;
+    }
+
+    if (countBadge) {
+        countBadge.textContent = `${data ? data.length : 0} added`;
+    }
+
+    if (!data || data.length === 0) {
+        container.innerHTML = `
+            <p class="text-muted">No trusted contacts added yet.</p>
+        `;
+        return;
+    }
+
+    container.innerHTML = "";
+
+    data.forEach(contact => {
+
+        const initials = contact.name
+            .split(" ")
+            .map(word => word[0])
+            .join("")
+            .substring(0, 2)
+            .toUpperCase();
+
+        const safePhone = String(contact.phone).replace(/[^0-9+\-\s]/g, "");
+
+        container.innerHTML += `
+            <div class="contact-item">
+                <div class="avatar avatar-md">
+                    ${initials}
+                </div>
+                <div class="contact-info">
+                    <div class="contact-name">${contact.name}</div>
+                    <div class="contact-relation">${contact.relation} &middot; ${contact.phone}</div>
+                </div>
+                <div class="contact-actions">
+                    <a href="tel:${safePhone}" class="btn-icon" aria-label="Call ${contact.name}">
+                        <i data-lucide="phone"></i>
+                    </a>
+                    <button class="btn-icon" aria-label="Edit ${contact.name}">
+                        <i data-lucide="pencil"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+
     if (window.lucide) {
         lucide.createIcons();
     }
@@ -1332,6 +1417,9 @@ async function addTrustedContact() {
     if (addBtn) addBtn.style.display = "block";
 
     loadTrustedContacts();
+    if (typeof loadProfileTrustedContacts === 'function') {
+        loadProfileTrustedContacts();
+    }
 
     alert("Trusted Contact Added Successfully.");
 }
@@ -1353,6 +1441,19 @@ if (document.readyState === 'loading') {
             });
         }
 
+        const profileAddBtn = document.getElementById("profile-add-contact-btn");
+        if (profileAddBtn) {
+            profileAddBtn.addEventListener("click", () => {
+                window.location.hash = "#view-checkin";
+                setTimeout(() => {
+                    const addContactForm = document.getElementById("addContactForm");
+                    const showAddBtn = document.getElementById("showAddContact");
+                    if (addContactForm) addContactForm.style.display = "block";
+                    if (showAddBtn) showAddBtn.style.display = "none";
+                }, 100);
+            });
+        }
+
     });
 
 } else {
@@ -1367,6 +1468,19 @@ if (document.readyState === 'loading') {
         addBtn.addEventListener("click", () => {
             document.getElementById("addContactForm").style.display = "block";
             addBtn.style.display = "none";
+        });
+    }
+
+    const profileAddBtn = document.getElementById("profile-add-contact-btn");
+    if (profileAddBtn) {
+        profileAddBtn.addEventListener("click", () => {
+            window.location.hash = "#view-checkin";
+            setTimeout(() => {
+                const addContactForm = document.getElementById("addContactForm");
+                const showAddBtn = document.getElementById("showAddContact");
+                if (addContactForm) addContactForm.style.display = "block";
+                if (showAddBtn) showAddBtn.style.display = "none";
+            }, 100);
         });
     }
 
